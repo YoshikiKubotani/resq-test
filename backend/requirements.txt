@@ -1,0 +1,6 @@
+fastapi
+mangum
+openai
+python-dotenv
+pydantic
+uvicorn[standard]
