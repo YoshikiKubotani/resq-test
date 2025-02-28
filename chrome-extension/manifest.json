@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Gmail Reply Support AI",
-    "version": "8.1",
+    "name": "ResQ",
+    "version": "1.0",
     "description": "AI-powered reply editor for Gmail",
     "permissions": ["storage", "activeTab", "scripting", "tabs", "windows"],
     "content_scripts": [
