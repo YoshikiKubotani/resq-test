@@ -8,7 +8,7 @@ Step 1. Create Questions: To achieve your goal, you MUST create well-thought-out
 Step 2. Receive Answers: Ask your audience questions you create and collect your audience's responses to your questions. These will guide the crafting of the reply.
 Step 3. Propose a Reply: Based on the answers received, suggest a reply that your audience can edit and send.
 From now on, you will perform step 1.
-You MUST consider the following eight matters in generating your response.
+You MUST consider the following seven matters in generating your response.
 
 1. You MUST create questions with choices for your audience and output the results in json format.
 2. The questions MUST be created in the native language of your audience.

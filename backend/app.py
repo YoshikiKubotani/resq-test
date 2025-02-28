@@ -1,16 +1,18 @@
+import os
+import logging
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
-import asyncio
-from prompts import generate_question_prompt, generate_reply_prompt
-import os
-from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 from dotenv import load_dotenv
 from openai import OpenAI
-from fastapi.middleware.cors import CORSMiddleware
+from prompts import generate_question_prompt, generate_reply_prompt
 
+# ロギングの設定
+logging.basicConfig(level=logging.INFO)
+
+# 環境変数の読み込み
 load_dotenv()
-
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("API key is not set")
@@ -19,6 +21,7 @@ client = OpenAI(api_key=api_key)
 
 app = FastAPI()
 
+# CORSミドルウェアの設定
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -30,6 +33,7 @@ app.add_middleware(
 @app.get('/')
 async def root():
     return {"message": "Hello from lambda"}
+
 
 @app.post("/api/chrome_generate_questions_stream")
 async def generate_questions(request: Request):
@@ -106,27 +110,5 @@ async def generate_reply(request: Request):
             yield f"Error: {str(e)}"
 
     return StreamingResponse(reply_generator(), media_type="text/plain")
-
-# エディタを開いたときのログを記録
-@app.post("/api/chrome_open_editor")
-async def record_open_editor(request: Request):
-    data = await request.json()
-    user_id = data.get("user_id")
-    reply_editor_tab_id = data.get("replyEditorTabId")
-    content_tab_id = data.get("contentTabId")
-    
-    print(f"Editor opened by user {user_id} with replyEditorTabId {reply_editor_tab_id} and contentTabId {content_tab_id}")
-    return {"status": "ok"}
-
-# エディタを閉じたときのログを記録
-@app.post("/api/chrome_close_editor")
-async def record_close_editor(request: Request):
-    data = await request.json()
-    user_id = data.get("user_id")
-    reply_editor_tab_id = data.get("replyEditorTabId")
-    content_tab_id = data.get("contentTabId")
-    
-    print(f"Editor closed by user {user_id} with replyEditorTabId {reply_editor_tab_id} and contentTabId {content_tab_id}")
-    return {"status": "ok"}
 
 handler = Mangum(app)

@@ -6,8 +6,6 @@ def load_backend_prompt(file_path):
 def generate_question_prompt(conversation_history):
     # バックエンドで使用するプロンプト
     backend_prompt = load_backend_prompt("generate_questions.txt")
-
-    print(conversation_history)
     
     # フロントエンドのデータ（conversation_history）と結合
     combined_prompt = f"{backend_prompt}\nConversation History:\n{conversation_history}"
