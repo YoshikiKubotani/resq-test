@@ -1,0 +1,32 @@
+name: dev-${PROJECT_NAME_ENV}
+services:
+  backend:
+    build:
+      args:
+        - UID=${HOST_UID-1000}
+        - GID=${HOST_GID-1000}
+        - PROJECT_NAME=${PROJECT_NAME_ENV}-backend
+      context: ../../
+      dockerfile: environments/Dockerfile.backend
+    env_file:
+      - ../backend.env
+    tty: true
+    init: true
+    volumes:
+        - ../../applications/backend:/home/trailblazer/${PROJECT_NAME_ENV}-backend
+    ports:
+        - 8001:8000
+
+  chrome-extension:
+    build:
+      args:
+          - PROJECT_NAME=${PROJECT_NAME_ENV}-chrome-extension
+      context: ../../
+      dockerfile: environments/Dockerfile.chrome
+    user: "node"
+    tty: true
+    init: true
+    volumes:
+        - ../../applications/chrome-extension:/home/node/${PROJECT_NAME_ENV}-chrome-extension
+    ports:
+        - 5173:5173

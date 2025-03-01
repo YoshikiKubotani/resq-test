@@ -1,0 +1,7 @@
+/backend
+/chrome-extension
+.DS_Store
+
+/environments/backend.env
+
+.vscode/

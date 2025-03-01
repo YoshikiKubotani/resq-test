@@ -1,0 +1,14 @@
+services:
+  backend:
+    image: ci
+    build:
+      args:
+        - RUN_UV_SYNC_AT_BUILD_TIME=true
+        - PROJECT_NAME=${PROJECT_NAME_ENV}-backend
+      context: ../../
+      dockerfile: environments/Dockerfile.backend
+    environment:
+      - PATH=/home/trailblazer/${PROJECT_NAME_ENV}-backend/.venv/bin:$PATH
+    tty: true
+    volumes:
+        - ../../applications/backend:/home/trailblazer/${PROJECT_NAME_ENV}-backend
