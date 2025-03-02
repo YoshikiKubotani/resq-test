@@ -14,10 +14,9 @@
     "format:eslint": "run-s \" lint:eslint --fix \"",
     "format:prettier": "run-s \" lint:prettier --write \"",
     "lint": "run-p lint:*",
-    "lint:eslint": "eslint . --ext .js,.ts,.tsx --max-warnings 0 --ignore-path .gitignore",
-    "lint:prettier": "prettier \"**/*.(md|json|yml)\" --ignore-path .gitignore --check",
-    "lint:type": "tsc --noEmit",
-    "ci:test": "run-s \" test --ci --reporters=\"default\" --reporters=\"github-actions\" \""
+    "lint:eslint": "eslint . --max-warnings 0",
+    "lint:prettier": "prettier --check .",
+    "lint:type": "tsc --noEmit"
   },
   "dependencies": {
     "@twind/core": "^1.1.3",
