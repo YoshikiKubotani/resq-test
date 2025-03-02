@@ -1,5 +1,5 @@
-import { defineManifest } from '@crxjs/vite-plugin';
-import { version } from '../package.json';
+import { defineManifest } from '@crxjs/vite-plugin'
+import { version } from '../package.json'
 
 // NOTE: do not include src/ in paths,
 // vite root folder: src, public folder: public (based on the project root)
@@ -49,6 +49,6 @@ const manifest = defineManifest(async (env) => ({
     '128': 'images/extension_128.png',
   },
   permissions: ['storage', 'tabs'],
-}));
+}))
 
-export default manifest;
+export default manifest
