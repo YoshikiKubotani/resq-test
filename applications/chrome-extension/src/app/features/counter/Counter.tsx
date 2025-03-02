@@ -25,7 +25,7 @@ export function Counter() {
     <div className="p-2">
       <div className="mb-4 flex items-center justify-center">
         <button
-          className="ml-1 mr-2 cursor-pointer rounded-[2px] border-2 border-solid border-transparent bg-purple-800 px-3 pb-1 text-2xl text-purple-500 opacity-10 outline-none hover:opacity-20"
+          className="ml-1 mr-2 cursor-pointer rounded-[2px] border-2 border-solid border-transparent bg-purple-800/10 px-3 pb-1 text-2xl text-purple-500 outline-none hover:bg-purple-800/20"
           aria-label="Decrement value"
           onClick={() => decrement()}
         >
@@ -33,7 +33,7 @@ export function Counter() {
         </button>
         <span className="mt-0.5 px-4 font-mono text-7xl">{count}</span>
         <button
-          className="ml-1 mr-2 cursor-pointer rounded-[2px] border-2 border-solid border-transparent bg-purple-800 px-3 pb-1 text-2xl text-purple-500 opacity-10 outline-none hover:opacity-20"
+          className="ml-1 mr-2 cursor-pointer rounded-[2px] border-2 border-solid border-transparent bg-purple-800/10 px-3 pb-1 text-2xl text-purple-500 outline-none hover:bg-purple-800/20"
           aria-label="Increment value"
           onClick={() => increment()}
         >
@@ -48,19 +48,19 @@ export function Counter() {
           onChange={(e) => setIncrementAmount(e.target.value)}
         />
         <button
-          className="ml-1 mr-2 rounded-[2px] border-2 border-solid border-transparent bg-purple-800 px-3 pb-1 text-2xl text-purple-500 opacity-10 outline-none hover:opacity-20"
+          className="ml-1 mr-2 rounded-[2px] border-2 border-solid border-transparent bg-purple-800/10 px-3 pb-1 text-2xl text-purple-500 outline-none hover:bg-purple-800/20"
           onClick={() => incrementByAmount(incrementValue)}
         >
           Add Amount
         </button>
         <button
-          className="ml-1 mr-2 rounded-[2px] border-2 border-solid border-transparent bg-purple-800 px-3 pb-1 text-2xl text-purple-500 opacity-10 outline-none hover:opacity-20"
+          className="ml-1 mr-2 rounded-[2px] border-2 border-solid border-transparent bg-purple-800/10 px-3 pb-1 text-2xl text-purple-500 outline-none hover:bg-purple-800/20"
           onClick={() => incrementAsync(incrementValue)}
         >
           Add Async
         </button>
         <button
-          className="ml-1 mr-2 rounded-[2px] border-2 border-solid border-transparent bg-purple-800 px-3 pb-1 text-2xl text-purple-500 opacity-10 outline-none hover:opacity-20"
+          className="ml-1 mr-2 rounded-[2px] border-2 border-solid border-transparent bg-purple-800/10 px-3 pb-1 text-2xl text-purple-500 outline-none hover:bg-purple-800/20"
           onClick={() => incrementIfOdd(incrementValue)}
         >
           Add If Odd
