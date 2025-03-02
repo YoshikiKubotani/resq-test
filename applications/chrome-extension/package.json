@@ -36,7 +36,6 @@
     "@crxjs/vite-plugin": "^2.0.0-beta.32",
     "@eslint/config-inspector": "^1.0.1",
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4.0.9",
     "@testing-library/dom": "^10.0.0",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.4.3",
