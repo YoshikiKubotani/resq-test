@@ -7,11 +7,23 @@ import manifest from './src/manifest';
 export default defineConfig({
   // @see https://github.com/crxjs/chrome-extension-tools/issues/696
   server: {
+    cors: {
+      origin: [
+        // Allows the specific chrome-extension to access the vite server
+        'chrome-extension://flkidooidkipjakanlnedfccmaokfboe',
+      ],
+    },
     port: 5173,
     strictPort: true,
     hmr: {
       port: 5173,
     },
+  },
+  legacy: {
+    // ⚠️ SECURITY RISK: Allows WebSockets to connect to the vite server without a token check ⚠️
+    // See https://github.com/crxjs/chrome-extension-tools/issues/971 for more info
+    // The linked issue gives a potential fix that @crxjs/vite-plugin could implement
+    skipWebSocketTokenCheck: true,
   },
   // prevent src/ prefix on extension urls
   root: resolve(__dirname, 'src'),

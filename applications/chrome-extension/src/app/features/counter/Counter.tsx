@@ -1,21 +1,24 @@
 import { useState } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import {
-  decrement,
-  increment,
-  incrementAsync,
-  incrementByAmount,
-  incrementIfOdd,
-  selectCount,
+  countValueAtom,
+  decrementAtom,
+  incrementAsyncAtom,
+  incrementAtom,
+  incrementByAmountAtom,
+  incrementIfOddAtom,
 } from './counterSlice';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-
 export function Counter() {
-  const count = useAppSelector(selectCount);
-  const dispatch = useAppDispatch();
-  const [incrementAmount, setIncrementAmount] = useState('2');
+  const count = useAtomValue(countValueAtom);
+  const increment = useSetAtom(incrementAtom);
+  const decrement = useSetAtom(decrementAtom);
+  const incrementByAmount = useSetAtom(incrementByAmountAtom);
+  const incrementAsync = useSetAtom(incrementAsyncAtom);
+  const incrementIfOdd = useSetAtom(incrementIfOddAtom);
 
+  const [incrementAmount, setIncrementAmount] = useState('2');
   const incrementValue = Number(incrementAmount) || 0;
 
   return (
@@ -24,7 +27,7 @@ export function Counter() {
         <button
           className="ml-1 mr-2 px-3 text-2xl outline-none border-2 border-solid border-transparent text-purple-500 pb-1 cursor-pointer bg-purple-800 bg-opacity-10 hover:bg-opacity-20 rounded-[2px]"
           aria-label="Decrement value"
-          onClick={() => dispatch(decrement())}
+          onClick={() => decrement()}
         >
           -
         </button>
@@ -32,7 +35,7 @@ export function Counter() {
         <button
           className="ml-1 mr-2 px-3 text-2xl outline-none border-2 border-solid border-transparent text-purple-500 pb-1 cursor-pointer bg-purple-800 bg-opacity-10 hover:bg-opacity-20 rounded-[2px]"
           aria-label="Increment value"
-          onClick={() => dispatch(increment())}
+          onClick={() => increment()}
         >
           +
         </button>
@@ -46,19 +49,19 @@ export function Counter() {
         />
         <button
           className="ml-1 mr-2 px-3 pb-1 text-2xl outline-none border-2 border-solid border-transparent text-purple-500 bg-purple-800 bg-opacity-10 hover:bg-opacity-20 rounded-[2px]"
-          onClick={() => dispatch(incrementByAmount(incrementValue))}
+          onClick={() => incrementByAmount(incrementValue)}
         >
           Add Amount
         </button>
         <button
           className="ml-1 mr-2 px-3 pb-1 text-2xl outline-none border-2 border-solid border-transparent text-purple-500 bg-purple-800 bg-opacity-10 hover:bg-opacity-20 rounded-[2px]"
-          onClick={() => dispatch(incrementAsync(incrementValue))}
+          onClick={() => incrementAsync(incrementValue)}
         >
           Add Async
         </button>
         <button
           className="ml-1 mr-2 px-3 pb-1 text-2xl outline-none border-2 border-solid border-transparent text-purple-500 bg-purple-800 bg-opacity-10 hover:bg-opacity-20 rounded-[2px]"
-          onClick={() => dispatch(incrementIfOdd(incrementValue))}
+          onClick={() => incrementIfOdd(incrementValue)}
         >
           Add If Odd
         </button>
