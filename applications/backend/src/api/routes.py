@@ -4,6 +4,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
 from src.api.schemas import HealthCheckResponse, QuestionGenerationRequest
+from src.domain.models import MailInformation
 
 from src.domain.services.chat_service import ChatService
 
@@ -20,8 +21,11 @@ async def health_check() -> Any:
 
 @router.post("/api/chrome_generate_questions_stream")
 async def generate_questions(request: QuestionGenerationRequest) -> StreamingResponse:
+    mail_information: MailInformation = MailInformation(
+        mail_information=request.mail_information
+    )
     return StreamingResponse(
-        ChatService.generate_questions_stream(conversation_history),
+        ChatService.generate_questions_stream(mail_information),
         media_type="text/plain"
     )
 

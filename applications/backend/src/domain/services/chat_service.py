@@ -1,15 +1,13 @@
 from typing import Generator, List, Any
-from prompts import generate_question_prompt, generate_reply_prompt
-from openai import OpenAI
-from src.settings import OPENAI_API_KEY
+from src.domain.models import MailInformation
 
 # OpenAIクライアントのシングルトンインスタンス
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 class ChatService:
     @staticmethod
-    def generate_questions_stream(conversation_history: List[Any]) -> Generator[str, None, None]:
-        prompt = generate_question_prompt(conversation_history)
+    def generate_questions_stream(mail_information: MailInformation) -> Generator[str, None, None]:
+        prompt = generate_question_prompt(mail_information)
 
         try:
             response = client.chat.completions.create(
