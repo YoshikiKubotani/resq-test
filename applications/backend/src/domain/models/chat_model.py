@@ -30,7 +30,7 @@ class MailInformation(BaseModel):
 
     @field_validator("mail_information", mode="after")
     @classmethod
-    def is_valid_infomation(mail_information: list[ConversationContent]) -> list[ConversationContent]:
+    def is_valid_infomation(cls, mail_information: list[ConversationContent]) -> list[ConversationContent]:
         """Validate the mail information.
 
         Args:
