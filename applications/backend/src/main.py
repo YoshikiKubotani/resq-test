@@ -7,8 +7,8 @@ from fastapi.routing import APIRoute
 
 from starlette.middleware.cors import CORSMiddleware
 
-from src.api import router
-from src import settings
+from src.api.routes import router
+from src.settings import settings
 from src.utils import setup_logger
 
 logger = setup_logger(__name__)

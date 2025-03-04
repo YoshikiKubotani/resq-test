@@ -10,7 +10,7 @@ from openai.types.chat.chat_completion_chunk import ChoiceDelta, Choice as Chunk
 
 from src.domain.models import MailInformation, ReplyPromptInformation
 from src.settings import settings
-from utils import setup_logger
+from src.utils import setup_logger
 
 logger = setup_logger(__name__)
 
