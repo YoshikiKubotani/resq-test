@@ -34,7 +34,7 @@ WORKDIR ${APPLICATION_DIRECTORY}
 COPY --chown=${UID}:${GID} ${BACKEND_PATH}/pyproject.toml ${BACKEND_PATH}/uv.lock  ./
 RUN test ${INSTALL_UV_TOOLS} = "true" \
 && uv tool install ruff \
-&& uv tool install mypy \
+&& uv tool install mypy --with pydantic \
 && uv tool install pytest --with pytest-cov \
 && uv tool install mdformat --with mdformat-frontmatter --with mdformat-gfm --with mdformat-footnote \
 || echo "skip to install uv tools."

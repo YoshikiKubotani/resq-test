@@ -17,6 +17,9 @@ package = false
 python-preference = "only-system"
 
 [tool.mypy]
+plugins = [
+    "pydantic.mypy"
+]
 python_version = "3.10"
 # following setting is same as pysen
 # https://github.com/pfnet/pysen/blob/main/setup.cfg#L12
