@@ -1,7 +1,9 @@
 import pathlib
 from src.domain.models import MailInformation
 from src.settings import settings
+from utils import setup_logger
 
+logger = setup_logger(__name__)
 
 class ChatService:
     """The service for interacting with the OpenAI chat API."""
