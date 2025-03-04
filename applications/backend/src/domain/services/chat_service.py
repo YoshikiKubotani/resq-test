@@ -37,7 +37,7 @@ class ChatService:
 
     async def generate_questions_stream(self, mail_information: MailInformation) -> AsyncGenerator[str, None]:
         try:
-            input_message: str = self.question_generation_prompt + "\n" + mail_information.model_dump_json()
+            input_message: str = self.question_generation_prompt + "\n" + mail_information.parse_mail_information()
             stream: AsyncStream[ChatCompletionChunk] = await self.async_client.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "system", "content": input_message}],

@@ -49,3 +49,14 @@ class MailInformation(BaseModel):
                 raise ValueError("Mail information must contain system content only.")
         return contents
 
+    def parse_mail_information(self) -> str:
+        """Parse the mail information.
+
+        Returns:
+            str: The parsed mail information.
+        """
+        parsed_text: str = "[\n"
+        for content in self.contents:
+            parsed_text += content.model_dump_json(indent=4) + ",\n"
+        parsed_text += "]"
+        return parsed_text
