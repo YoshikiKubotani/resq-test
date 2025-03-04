@@ -22,6 +22,14 @@ async def health_check() -> Any:
 
 @router.post("/questions")
 async def generate_questions(request: QuestionGenerationRequest) -> StreamingResponse:
+    """Generate questions based on the mail information.
+
+    Args:
+        request (QuestionGenerationRequest): The request for generating questions.
+
+    Returns:
+        StreamingResponse: The generated question.
+    """
     mail_information: MailInformation = MailInformation(
         contents=request.mail_information
     )
@@ -34,6 +42,14 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
 
 @router.post("/reply")
 async def generate_reply(request: ReplyGenerationRequest) -> StreamingResponse:
+    """Generate replies based on the reply prompt information.
+
+    Args:
+        request (ReplyGenerationRequest): The request for generating replies.
+
+    Returns:
+        StreamingResponse: The generated reply.
+    """
     reply_prompt_inforamtion: ReplyPromptInformation = ReplyPromptInformation(
         contents=request.reply_prompt_information
     )

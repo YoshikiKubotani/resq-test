@@ -36,9 +36,14 @@ class ChatService:
         self.async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
     async def generate_questions_stream(self, mail_information: MailInformation) -> AsyncGenerator[str, None]:
-        try:
-            input_message: str = self.question_generation_prompt + "\n" + mail_information.parse_mail_information()
-            logger.info(f"Input Message: {input_message}", color="white", show_prefix=True)
+        """Generate questions based on the mail information.
+
+        Args:
+            mail_information (MailInformation): The mail information for generating questions.
+
+        Yields:
+            str: The generated question.
+        """
 
             stream: AsyncStream[ChatCompletionChunk] = await self.async_client.chat.completions.create(
                 model="gpt-4o",
@@ -96,6 +101,14 @@ class ChatService:
             yield f"Error: {str(e)}"
 
     async def generate_reply_stream(self, prompt_data: ReplyPromptInformation) -> AsyncGenerator[str, None]:
+        """Generate a reply based on the reply prompt information.
+
+        Args:
+            prompt_data (ReplyPromptInformation): The reply prompt information.
+
+        Yields:
+            str: The generated reply.
+        """
         try:
             input_message: str = self.reply_generation_prompt + "\n" + prompt_data.parse_reply_prompt_information()
             logger.info(f"Input Message: {input_message}", color="white", show_prefix=True)
