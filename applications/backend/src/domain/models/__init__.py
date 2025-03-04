@@ -1,3 +1,17 @@
-from .chat_model import ConversationContent, MailInformation, ReplyPromptInformation
+from .chat_model import (
+    EmailInformation,
+    UserInformation,
+    QuestionChoice,
+    ReplyCustomization,
+    QuestionGenerationInput,
+    ReplyGenerationInput,
+)
 
-__all__ = ["ConversationContent", "MailInformation", "ReplyPromptInformation"]
+__all__ = [
+    "EmailInformation",
+    "UserInformation",
+    "QuestionChoice",
+    "ReplyCustomization",
+    "QuestionGenerationInput",
+    "ReplyGenerationInput",
+]

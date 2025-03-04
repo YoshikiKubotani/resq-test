@@ -1,7 +1,7 @@
 import pathlib
 from typing import AsyncGenerator
 
-from src.domain.models.chat_model import MailInformation, ReplyPromptInformation
+from src.domain.models import QuestionGenerationInput, ReplyGenerationInput
 from src.domain.services.llm import QuestionGenerationLLM, ReplyGenerationLLM
 from src.utils import setup_logger
 
@@ -22,29 +22,29 @@ class ChatService:
         self._reply_generation_llm = ReplyGenerationLLM(prompt_directory)
 
     async def generate_questions_stream(
-        self, mail_information: MailInformation
+        self, input: QuestionGenerationInput
     ) -> AsyncGenerator[str, None]:
         """Generate questions based on the mail information.
 
         Args:
-            mail_information (MailInformation): The mail information for generating questions.
+            input (QuestionGenerationInput): The input for generating questions.
 
         Yields:
             str: The generated question.
         """
-        async for content in self._question_generation_llm.astream(mail_information):
+        async for content in self._question_generation_llm.astream(input):
             yield content
 
     async def generate_reply_stream(
-        self, prompt_data: ReplyPromptInformation
+        self, input: ReplyGenerationInput
     ) -> AsyncGenerator[str, None]:
         """Generate a reply based on the reply prompt information.
 
         Args:
-            prompt_data (ReplyPromptInformation): The reply prompt information.
+            input (ReplyGenerationInput): The input for generating replies.
 
         Yields:
             str: The generated reply.
         """
-        async for content in self._reply_generation_llm.astream(prompt_data):
+        async for content in self._reply_generation_llm.astream(input):
             yield content

@@ -1,3 +1,37 @@
 You MUST draft a reply to the sender of this email on behalf of the user and output only the content of the email (do not include the title).
 
-{{ prompt_info }}
+###Instruction###
+Your role is to compose a email reply on behalf of the user. You MUST generate a reply in the same language as the incoming mail
+
+###Incoming Mail###
+{{ incoming_mail }}
+
+###Past Correspondence###
+{{ past_correspondence }}
+
+###Mail Information###
+{{ mail_info }}
+
+###Audience Information###
+{{ audience_info }}
+
+###Signature###
+{{ signature }}
+
+###Questions and Answers###
+{% for choice in selected_choices %}
+###Question###
+{{ choice.question }}
+{% for answer in choice.choices %}
+###Answer###
+{{ answer }}
+{% endfor %}
+{% endfor %}
+
+{% if current_reply %}
+###Current Reply###
+{{ current_reply }}
+{% endif %}
+
+###Customization###
+{{ customization }}

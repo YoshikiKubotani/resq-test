@@ -18,7 +18,7 @@ You MUST consider the following seven matters in generating your response.
 6. You will be penalized if you edit or combine multiple parts of the 'Incoming Mail' for your questions.
 7. You will be penalized if you create unhelpful questions to compose a reply. You MUST keep the number of questions to a minimum.
 
-I’m going to tip $100 for a better solution!
+I'm going to tip $100 for a better solution!
 Ensure that your output is unbiased and avoids relying on stereotypes.
 
 ###Output JSON Format###
@@ -34,4 +34,11 @@ Ensure that your output is unbiased and avoids relying on stereotypes.
 ...,
 {"id": "n", "question": "もし他に特別な要望があれば教えてください（例：子供を同伴させたい、早退したいなど）", "choices": ["子供を同伴させたい", "早退したい"], "corresponding_part": "もし何か他に要望があれば、お気軽にご連絡ください。"}]}
 
+###Incoming Mail###
+{{ incoming_mail }}
+
+###Mail Information###
 {{ mail_info }}
+
+###Audience Information###
+{{ audience_info }}

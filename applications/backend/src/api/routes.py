@@ -9,7 +9,12 @@ from src.api.schemas import (
     QuestionGenerationRequest,
     ReplyGenerationRequest,
 )
-from src.domain.models import MailInformation, ReplyPromptInformation
+from src.domain.models import (
+    EmailInformation,
+    QuestionGenerationInput,
+    ReplyGenerationInput,
+    UserInformation,
+)
 from src.domain.services.chat_service import ChatService
 
 router = APIRouter()
@@ -35,13 +40,15 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
     Returns:
         StreamingResponse: The generated question.
     """
-    mail_information: MailInformation = MailInformation(
-        contents=request.mail_information
+    # Convert request to domain model
+    question_input = QuestionGenerationInput(
+        email_info=EmailInformation(**request.email_information.model_dump()),
+        user_info=UserInformation(**request.user_information.model_dump()),
     )
-    chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
 
+    chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
     return StreamingResponse(
-        chat_service.generate_questions_stream(mail_information),
+        chat_service.generate_questions_stream(question_input),
         media_type="text/event-stream",
     )
 
@@ -56,12 +63,17 @@ async def generate_reply(request: ReplyGenerationRequest) -> StreamingResponse:
     Returns:
         StreamingResponse: The generated reply.
     """
-    reply_prompt_inforamtion: ReplyPromptInformation = ReplyPromptInformation(
-        contents=request.reply_prompt_information
+    # Convert request to domain model
+    reply_input = ReplyGenerationInput(
+        email_info=EmailInformation(**request.email_information.model_dump()),
+        user_info=UserInformation(**request.user_information.model_dump()),
+        customization=request.customization,
+        selected_choices=request.selected_choices,
+        current_reply=request.current_reply,
     )
-    chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
 
+    chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
     return StreamingResponse(
-        chat_service.generate_reply_stream(reply_prompt_inforamtion),
+        chat_service.generate_reply_stream(reply_input),
         media_type="text/event-stream",
     )

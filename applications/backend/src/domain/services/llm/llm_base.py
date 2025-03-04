@@ -200,11 +200,11 @@ class LLMBase(ABC, Generic[InputDomainModel, OutputDomainModel]):
 
 
     @abstractmethod
-    async def astream(self, input_domain_model: InputDomainModel) -> AsyncGenerator[str, None]:
+    async def astream(self, input: InputDomainModel) -> AsyncGenerator[str, None]:
         """Abstract method for generating content using streaming."""
         pass
 
     @abstractmethod
-    async def acompletion(self, input_domain_model: InputDomainModel) -> OutputDomainModel:
+    async def acompletion(self, input: InputDomainModel) -> OutputDomainModel:
         """Abstract method for generating content using completion."""
         pass

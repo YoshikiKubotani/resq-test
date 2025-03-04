@@ -1,14 +1,14 @@
 import pathlib
 from typing import AsyncGenerator
 
-from src.domain.models.chat_model import ReplyPromptInformation
+from src.domain.models.chat_model import ReplyGenerationInput
 from .llm_base import LLMBase
 from src.utils import setup_logger
 
 logger = setup_logger(__name__)
 
 
-class ReplyGenerationLLM(LLMBase[ReplyPromptInformation, str]):
+class ReplyGenerationLLM(LLMBase[ReplyGenerationInput, str]):
     """LLM service for generating replies based on prompt information."""
 
     def __init__(self, prompt_directory: pathlib.Path) -> None:
@@ -28,32 +28,28 @@ class ReplyGenerationLLM(LLMBase[ReplyPromptInformation, str]):
         )
 
     async def astream(  # type: ignore
-        self, prompt_information: ReplyPromptInformation
+        self, input: ReplyGenerationInput
     ) -> AsyncGenerator[str, None]:
         """Generate a reply based on the prompt information using streaming.
 
         Args:
-            prompt_information (ReplyPromptInformation): The prompt information for generating a reply
+            input (ReplyGenerationInput): The input for generating a reply
 
         Yields:
             str: The generated reply
         """
-        template_values: dict[str, str] = {
-            "prompt_info": prompt_information.parse_reply_prompt_information(),
-        }
+        template_values: dict[str, str] = input.get_template_values()
         async for content in self._astream(template_values, "Generated Reply"):
             yield content
 
-    async def acompletion(self, prompt_information: ReplyPromptInformation) -> str:
+    async def acompletion(self, input: ReplyGenerationInput) -> str:
         """Generate a reply based on the prompt information.
 
         Args:
-            prompt_information (ReplyPromptInformation): The prompt information for generating a reply
+            input (ReplyGenerationInput): The input for generating a reply
 
         Returns:
             str: The generated reply
         """
-        template_values: dict[str, str] = {
-            "prompt_info": prompt_information.parse_reply_prompt_information(),
-        }
+        template_values: dict[str, str] = input.get_template_values()
         return await self._acompletion(template_values, "Generated Reply")
