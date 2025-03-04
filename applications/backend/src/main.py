@@ -13,18 +13,6 @@ from src.utils import setup_logger
 
 logger = setup_logger(__name__)
 
-
-def custom_generate_unique_id(route: APIRoute) -> str:
-    """Generate a unique id for each route.
-
-    Args:
-        route (APIRoute): The route.
-
-    Returns:
-        str: The unique id.
-    """
-    return f"{route.tags[0]}-{route.name}"
-
 # This is the lifespan context manager, which is called once before/after the server starts/stops.
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -58,7 +46,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(
     debug=True,
     title=settings.PROJECT_NAME,
-    generate_unique_id_function=custom_generate_unique_id,
     lifespan=lifespan,
 )
 
