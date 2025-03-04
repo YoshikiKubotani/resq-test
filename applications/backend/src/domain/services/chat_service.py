@@ -1,6 +1,10 @@
 from typing import Generator, List, Any
-from ..core.openai_client import client
 from prompts import generate_question_prompt, generate_reply_prompt
+from openai import OpenAI
+from src.settings import OPENAI_API_KEY
+
+# OpenAIクライアントのシングルトンインスタンス
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 class ChatService:
     @staticmethod
