@@ -3,8 +3,9 @@ from typing import Any
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
-from src.api.schemas import HealthCheckResponse
-from ..services.chat_service import ChatService
+from src.api.schemas import HealthCheckResponse, QuestionGenerationRequest
+
+from src.domain.services.chat_service import ChatService
 
 router = APIRouter()
 
@@ -18,11 +19,7 @@ async def health_check() -> Any:
     return {"status": "ok"}
 
 @router.post("/api/chrome_generate_questions_stream")
-async def generate_questions(request: Request):
-    data = await request.json()
-    conversation_history = data.get("conversationhistory", [])
-    user_id = data.get("user_id", "")  # user_idは現在未使用
-
+async def generate_questions(request: QuestionGenerationRequest) -> StreamingResponse:
     return StreamingResponse(
         ChatService.generate_questions_stream(conversation_history),
         media_type="text/plain"
