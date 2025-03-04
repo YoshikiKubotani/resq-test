@@ -44,6 +44,9 @@ class ChatService:
         Yields:
             str: The generated question.
         """
+        try:
+            input_message: str = self.question_generation_prompt + "\n" + mail_information.parse_mail_information()
+            logger.info(f"Input Message:\n{input_message}", color="gray", show_prefix=True)
 
             stream: AsyncStream[ChatCompletionChunk] = await self.async_client.chat.completions.create(
                 model="gpt-4o",
@@ -55,7 +58,7 @@ class ChatService:
 
             generated_questions: str = ""
 
-            for chunk in stream:
+            async for chunk in stream:
                 # Check if the chunk is a ChatCompletionChunk
                 if not isinstance(chunk, ChatCompletionChunk):
                     raise TypeError(f"Expected ChatCompletionChunk, got {type(chunk)}")
@@ -63,29 +66,30 @@ class ChatService:
                 # Extract the chunk data
                 completion_id: str = chunk.id # a unique identifier for the chat completion
                 created_timestamp: int = chunk.created # the unix timestamp (in seconds) of when the completion was created
-                usage: CompletionUsage | None = chunk.usage # the usage statistics for the completion
-                choices: list[ChunkChoice] = chunk.choices
-                if len(choices) != 1:
-                    raise ValueError(f"Expected 1 choice, got {len(choices)}. This error may occur if the chat completion `create` method is called with `n` greater than 1.")
-
                 datetime_tokyo: datetime = datetime.fromtimestamp(float(created_timestamp), tz=ZoneInfo("Asia/Tokyo"))
+
+                usage: CompletionUsage | None = chunk.usage # the usage statistics for the completion
                 if usage is not None:
+                    logger.info(f"Completion ID: {completion_id}", color="gray", show_prefix=True)
+                    logger.info(f"Created Timestamp: {datetime_tokyo}", color="gray", show_prefix=True)
                     logger.info(f"Completion Tokens: {usage.completion_tokens}", color="green", show_prefix=True)
                     logger.info(f"Prompt Tokens: {usage.prompt_tokens}", color="green", show_prefix=False)
                     logger.info(f"Total: {usage.total_tokens}", color="green", show_prefix=False)
+
+                choices: list[ChunkChoice] = chunk.choices
+                if len(choices) == 0:
+                    continue
+                if len(choices) != 1:
+                    raise ValueError(f"Expected 1 choice, got {len(choices)}. This error may occur if the chat completion `create` method is called with `n` greater than 1.")
+
 
                 # Extract the chunk content data
                 chunk_content: ChoiceDelta = choices[0].delta
                 content_message: str | None = chunk_content.content
                 refusal_message: str | None = chunk_content.refusal
-                role: str | None = chunk_content.role
-                if content_message is None and refusal_message is None and role is None:
-                    raise ValueError("Both content message, refusal message, and role are None.")
                 if content_message is not None:
                     if refusal_message is not None:
                         raise ValueError("Both content message and refusal message are not None.")
-                    if role is None:
-                        raise ValueError("The role is missing even though the content message is present.")
                 else:
                     if refusal_message is not None:
                         raise ValueError(f"The OpenAI API server refused to process the input for the following reason.\n{refusal_message}")
@@ -97,7 +101,7 @@ class ChatService:
             logger.info(f"Generated Questions: {generated_questions}", color="magenta", show_prefix=True)
 
         except Exception as e:
-            logger.error(e, color="red", show_prefix=True)
+            logger.error(e)
             yield f"Error: {str(e)}"
 
     async def generate_reply_stream(self, prompt_data: ReplyPromptInformation) -> AsyncGenerator[str, None]:
@@ -111,7 +115,7 @@ class ChatService:
         """
         try:
             input_message: str = self.reply_generation_prompt + "\n" + prompt_data.parse_reply_prompt_information()
-            logger.info(f"Input Message: {input_message}", color="white", show_prefix=True)
+            logger.info(f"Input Message: {input_message}", color="gray", show_prefix=True)
 
             stream: AsyncStream[ChatCompletionChunk] = await self.async_client.chat.completions.create(
                 model="gpt-4o",
@@ -123,7 +127,7 @@ class ChatService:
 
             generated_reply: str = ""
 
-            for chunk in stream:
+            async for chunk in stream:
                 # Check if the chunk is a ChatCompletionChunk
                 if not isinstance(chunk, ChatCompletionChunk):
                     raise TypeError(f"Expected ChatCompletionChunk, got {type(chunk)}")
@@ -131,29 +135,30 @@ class ChatService:
                 # Extract the chunk data
                 completion_id: str = chunk.id # a unique identifier for the chat completion
                 created_timestamp: int = chunk.created # the unix timestamp (in seconds) of when the completion was created
-                usage: CompletionUsage | None = chunk.usage # the usage statistics for the completion
-                choices: list[ChunkChoice] = chunk.choices
-                if len(choices) != 1:
-                    raise ValueError(f"Expected 1 choice, got {len(choices)}. This error may occur if the chat completion `create` method is called with `n` greater than 1.")
-
                 datetime_tokyo: datetime = datetime.fromtimestamp(float(created_timestamp), tz=ZoneInfo("Asia/Tokyo"))
+
+                usage: CompletionUsage | None = chunk.usage # the usage statistics for the completion
                 if usage is not None:
+                    logger.info(f"Completion ID: {completion_id}", color="gray", show_prefix=True)
+                    logger.info(f"Created Timestamp: {datetime_tokyo}", color="gray", show_prefix=True)
                     logger.info(f"Completion Tokens: {usage.completion_tokens}", color="green", show_prefix=True)
                     logger.info(f"Prompt Tokens: {usage.prompt_tokens}", color="green", show_prefix=False)
                     logger.info(f"Total: {usage.total_tokens}", color="green", show_prefix=False)
+
+                choices: list[ChunkChoice] = chunk.choices
+                if len(choices) == 0:
+                    continue
+                if len(choices) != 1:
+                    raise ValueError(f"Expected 1 choice, got {len(choices)}. This error may occur if the chat completion `create` method is called with `n` greater than 1.")
+
 
                 # Extract the chunk content data
                 chunk_content: ChoiceDelta = choices[0].delta
                 content_message: str | None = chunk_content.content
                 refusal_message: str | None = chunk_content.refusal
-                role: str | None = chunk_content.role
-                if content_message is None and refusal_message is None and role is None:
-                    raise ValueError("Both content message, refusal message, and role are None.")
                 if content_message is not None:
                     if refusal_message is not None:
                         raise ValueError("Both content message and refusal message are not None.")
-                    if role is None:
-                        raise ValueError("The role is missing even though the content message is present.")
                 else:
                     if refusal_message is not None:
                         raise ValueError(f"The OpenAI API server refused to process the input for the following reason.\n{refusal_message}")
@@ -165,5 +170,5 @@ class ChatService:
             logger.info(f"Generated Reply: {generated_reply}", color="magenta", show_prefix=True)
 
         except Exception as e:
-            logger.error(e, color="red", show_prefix=True)
+            logger.error(e)
             yield f"Error: {str(e)}"
