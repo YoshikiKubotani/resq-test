@@ -21,14 +21,14 @@ class ColorFormatter(Formatter):
     }
 
     NAMED_COLORS = {
-        "black": "\033[30m",
+        "gray": "\033[90m",
         "red": "\033[31m",
         "green": "\033[32m",
         "yellow": "\033[33m",
         "blue": "\033[34m",
         "magenta": "\033[35m",
         "cyan": "\033[36m",
-        "white": "\033[37m",
+        "white": "\033[97m",
     }
 
     RESET = "\033[0m"  # reset color
@@ -84,7 +84,7 @@ class ColorLogger(logging.Logger):
     def info(  # type: ignore[override]
         self,
         msg: str,
-        color: str = "white",
+        color: str = "gray",
         show_prefix: bool = True,
         *args: Any,
         **kwargs: Any,
@@ -93,7 +93,7 @@ class ColorLogger(logging.Logger):
 
         Args:
           msg (str): log message
-          color (str, optional): color name. Defaults to "white".
+          color (str, optional): color name. Defaults to "gray".
           show_prefix (bool, optional): whether to include the prefix. Defaults to True.
           *args: extra arguments (We don't use this)
           **kwargs: extra keyword arguments (We use this to pass color and show_prefix)
