@@ -1,7 +1,7 @@
 
 import json
-from pydantic import SecretStr
-from pydantic_settings import BaseSettings, field_validator
+from pydantic import SecretStr, field_validator
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings, case_sensitive=True):
     """The settings for the application.

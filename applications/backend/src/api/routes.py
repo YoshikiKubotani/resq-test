@@ -1,11 +1,11 @@
 from typing import Any
 import pathlib
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
 from src.api.schemas import HealthCheckResponse, QuestionGenerationRequest, ReplyGenerationRequest
-from src.domain.models import MailInformation
+from src.domain.models import MailInformation, ReplyPromptInformation
 
 from src.domain.services.chat_service import ChatService
 
