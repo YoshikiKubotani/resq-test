@@ -38,6 +38,8 @@ class ChatService:
     async def generate_questions_stream(self, mail_information: MailInformation) -> AsyncGenerator[str, None]:
         try:
             input_message: str = self.question_generation_prompt + "\n" + mail_information.parse_mail_information()
+            logger.info(f"Input Message: {input_message}", color="white", show_prefix=True)
+
             stream: AsyncStream[ChatCompletionChunk] = await self.async_client.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "system", "content": input_message}],
@@ -96,6 +98,7 @@ class ChatService:
     async def generate_reply_stream(self, prompt_data: ReplyPromptInformation) -> AsyncGenerator[str, None]:
         try:
             input_message: str = self.reply_generation_prompt + "\n" + prompt_data.parse_reply_prompt_information()
+            logger.info(f"Input Message: {input_message}", color="white", show_prefix=True)
 
             stream: AsyncStream[ChatCompletionChunk] = await self.async_client.chat.completions.create(
                 model="gpt-4o",
