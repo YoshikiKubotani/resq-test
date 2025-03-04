@@ -96,7 +96,8 @@ class ChatService:
                     content_message = ""
 
                 generated_questions += content_message
-                yield content_message
+                yield f"data:{content_message}\n\n"
+
 
             logger.info(f"Generated Questions: {generated_questions}", color="magenta", show_prefix=True)
 
@@ -165,7 +166,7 @@ class ChatService:
                     content_message = ""
 
                 generated_reply += content_message
-                yield content_message
+                yield f"data:{content_message}\n\n"
 
             logger.info(f"Generated Reply: {generated_reply}", color="magenta", show_prefix=True)
 

@@ -37,7 +37,7 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
 
     return StreamingResponse(
         chat_service.generate_questions_stream(mail_information),
-        media_type="text/plain"
+        media_type="text/event-stream",
     )
 
 @router.post("/reply")
@@ -57,5 +57,5 @@ async def generate_reply(request: ReplyGenerationRequest) -> StreamingResponse:
 
     return StreamingResponse(
         chat_service.generate_reply_stream(reply_prompt_inforamtion),
-        media_type="text/plain"
+        media_type="text/event-stream"
     )
