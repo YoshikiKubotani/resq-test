@@ -4,7 +4,7 @@ import pathlib
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
-from src.api.schemas import HealthCheckResponse, QuestionGenerationRequest
+from src.api.schemas import HealthCheckResponse, QuestionGenerationRequest, ReplyGenerationRequest
 from src.domain.models import MailInformation
 
 from src.domain.services.chat_service import ChatService
@@ -33,7 +33,7 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
     )
 
 @router.post("/reply")
-async def generate_reply(request: Request):
+async def generate_reply(request: ReplyGenerationRequest):
     data = await request.json()
     prompt_data = data.get("prompt", [])
     user_id = data.get("user_id", "")  # user_idは現在未使用

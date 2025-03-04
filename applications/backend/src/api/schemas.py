@@ -20,3 +20,13 @@ class QuestionGenerationRequest(BaseModel):
     """
     mail_information: list[Annotated[ConversationContent, Field(..., description="The mail information for generating questions.")]]
     api_key: Annotated[SecretStr, Field(..., description="The API key for the OpenAI API")]
+
+class ReplyGenerationRequest(BaseModel):
+    """The request for generating replies.
+
+    Attributes:
+        reply_prompt_information (list[ConversationContent]): The reply prompt information.
+        api_key (SecretStr): The API key for the OpenAI API
+    """
+    reply_prompt: list[Annotated[ConversationContent, Field(..., description="The reply prompt information.")]]
+    api_key: Annotated[SecretStr, Field(..., description="The API key for the OpenAI API")]
