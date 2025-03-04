@@ -4,7 +4,12 @@ version = "0.1.0"
 description = "LLM-powered email assistant agent designed for those weary of crafting the perfect reply"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "fastapi>=0.115.11",
+    "gunicorn>=23.0.0",
+    "pydantic-settings>=2.8.1",
+    "uvicorn>=0.34.0",
+]
 
 [tool.uv]
 package = false
@@ -74,6 +79,8 @@ unfixable = ["F401", "F841"]
 convention = "google"
 
 [tool.poe.tasks]
+run-backend-dev = "uvicorn src.main:app --host 0.0.0.0 --port 8000 --log-level debug --reload"
+run-backend-prod = "uvicorn src.main:app --host 0.0.0.0 --port 8000 --log-level debug --workers 4 --timeout 60"
 ruff-format = "ruff format src tests"
 ruff-format-check = "ruff format --check src tests"
 ruff-lint = "ruff check src tests --fix"
