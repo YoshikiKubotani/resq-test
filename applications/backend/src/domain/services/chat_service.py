@@ -24,7 +24,7 @@ class ChatService:
         """
         # The path to the question generation prompt file.
         self.question_generation_prompt_path: pathlib.Path = prompt_directory / "question_generation_prompt.txt"
-        self.reply_generation_prompt_path: pathlib.Path = prompt_directory / "reply_prompt.txt"
+        self.reply_generation_prompt_path: pathlib.Path = prompt_directory / "reply_generation_prompt.txt"
 
         with open(self.question_generation_prompt_path, "r", encoding="utf-8") as f:
             self.question_generation_prompt: str = f.read()
