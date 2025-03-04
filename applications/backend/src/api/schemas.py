@@ -9,7 +9,7 @@ class HealthCheckResponse(BaseModel):
     Attributes:
         status (str): The status of the health check.
     """
-    status: str
+    status: Annotated[str, Field(..., description="The status of the health check.")]
 
 class QuestionGenerationRequest(BaseModel):
     """The request for generating questions.
@@ -19,4 +19,4 @@ class QuestionGenerationRequest(BaseModel):
         api_key (SecretStr): The API key for the OpenAI API
     """
     mail_information: list[Annotated[ConversationContent, Field(..., description="The mail information for generating questions.")]]
-    api_key: SecretStr
+    api_key: Annotated[SecretStr, Field(..., description="The API key for the OpenAI API")]
