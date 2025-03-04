@@ -1,6 +1,5 @@
 
 import json
-from typing import List
 from pydantic_settings import BaseSettings, field_validator
 
 class Settings(BaseSettings, case_sensitive=True):
@@ -19,7 +18,7 @@ class Settings(BaseSettings, case_sensitive=True):
 
     # CORS_ALLOW_ORIGINS is a JSON-formatted list of origins that are allowed to make requests to the API.
     # e.g: '["http://localhost", "http://localhost:8080"]'
-    CORS_ALLOW_ORIGINS: List[str]
+    CORS_ALLOW_ORIGINS: str
     @field_validator("CORS_ALLOW_ORIGINS", mode="before")
     @classmethod
     def validate_cors_origins(cls, v: str) -> str:
