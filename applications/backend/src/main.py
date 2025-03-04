@@ -3,8 +3,6 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from fastapi.routing import APIRoute
-
 from starlette.middleware.cors import CORSMiddleware
 
 from src.api.routes import router
@@ -12,6 +10,7 @@ from src.settings import settings
 from src.utils import setup_logger
 
 logger = setup_logger(__name__)
+
 
 # This is the lifespan context manager, which is called once before/after the server starts/stops.
 @asynccontextmanager
@@ -40,7 +39,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     # Some Shutdown processes
     # ...
-
 
 
 app = FastAPI(

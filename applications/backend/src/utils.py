@@ -1,6 +1,6 @@
 import logging
 from logging import Formatter, LogRecord
-from typing import Any
+from typing import Any, cast
 
 
 class ColorFormatter(Formatter):
@@ -105,7 +105,7 @@ class ColorLogger(logging.Logger):
         super().info(msg, *args, **kwargs)
 
 
-def setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
+def setup_logger(name: str, level: int = logging.INFO) -> ColorLogger:
     """Setup logger with colorized output.
 
     Args:
@@ -113,11 +113,11 @@ def setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
       level (int, optional): logging level. Defaults to logging.INFO.
 
     Returns:
-      logging.Logger: logger object
+      ColorLogger: The colorized logger
     """
     logging.setLoggerClass(ColorLogger)
 
-    logger = logging.getLogger(name)
+    logger = cast(ColorLogger, logging.getLogger(name))
     logger.setLevel(level)
 
     # Create console handler

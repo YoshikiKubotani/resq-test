@@ -1,25 +1,31 @@
-
 import json
-from pydantic import SecretStr, field_validator
-from pydantic_settings import BaseSettings
 
-class Settings(BaseSettings, case_sensitive=True):
+from pydantic import SecretStr, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):  # type: ignore
     """The settings for the application.
 
     Attributes:
         PROJECT_NAME (str): The name of the project.
         OPENAI_API_KEY (str): The API key for the OpenAI API.
+        LLM_MODEL (str): The language model to use for the OpenAI API.
         CORS_ALLOW_ORIGINS (List[str]): The origins that are allowed to make requests to the API.
     """
+
+    model_config = SettingsConfigDict(case_sensitive=True)
+
     PROJECT_NAME: str = "ResQ API"
 
     # OpenAI settings
-    OPENAI_API_KEY: SecretStr = ""
+    OPENAI_API_KEY: SecretStr
     LLM_MODEL: str = "gpt-4o"
 
     # CORS_ALLOW_ORIGINS is a JSON-formatted list of origins that are allowed to make requests to the API.
     # e.g: '["http://localhost", "http://localhost:8080"]'
     CORS_ALLOW_ORIGINS: str
+
     @field_validator("CORS_ALLOW_ORIGINS", mode="before")
     @classmethod
     def validate_cors_origins(cls, v: str) -> str:

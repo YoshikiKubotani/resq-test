@@ -1,14 +1,16 @@
-from typing import Annotated
-from pydantic import BaseModel, Field, field_validator
-
 from enum import Enum
+from typing import Annotated
+
+from pydantic import BaseModel, Field, field_validator
 
 
 class Role(str, Enum):
     """The role of the content."""
+
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
+
 
 class ConversationContent(BaseModel):
     """The content of the conversation.
@@ -17,8 +19,10 @@ class ConversationContent(BaseModel):
         role (Role): The role of the content. Either "system", "user", or "assistant".
         content (str): The content of the conversation.
     """
+
     role: Annotated[Role, Field(..., description="The role of the content.")]
     content: Annotated[str, Field(..., description="The content of the conversation.")]
+
 
 class MailInformation(BaseModel):
     """The mail information for generating questions.
@@ -26,11 +30,19 @@ class MailInformation(BaseModel):
     Attributes:
         contents (list[ConversationContent]): The mail information for generating questions.
     """
-    contents: list[Annotated[ConversationContent, Field(..., description="The mail information for generating questions.")]]
+
+    contents: list[
+        Annotated[
+            ConversationContent,
+            Field(..., description="The mail information for generating questions."),
+        ]
+    ]
 
     @field_validator("contents", mode="after")
     @classmethod
-    def is_valid_infomation(cls, contents: list[ConversationContent]) -> list[ConversationContent]:
+    def is_valid_infomation(
+        cls, contents: list[ConversationContent]
+    ) -> list[ConversationContent]:
         """Validate the mail information.
 
         Args:
@@ -43,7 +55,9 @@ class MailInformation(BaseModel):
             list[ConversationContent]: The validated mail information.
         """
         if len(contents) != 3:
-            raise ValueError("Mail information must contain 3 elements; incoming mail content, sender information, and receiver information.")
+            raise ValueError(
+                "Mail information must contain 3 elements; incoming mail content, sender information, and receiver information."
+            )
         for content in contents:
             if content.role != Role.SYSTEM:
                 raise ValueError("Mail information must contain system content only.")
@@ -61,13 +75,19 @@ class MailInformation(BaseModel):
         parsed_text += "]"
         return parsed_text
 
+
 class ReplyPromptInformation(BaseModel):
     """The reply prompt information.
 
     Attributes:
         contents (list[ConversationContent]): The reply prompt information for generating replies.
     """
-    contents: list[Annotated[ConversationContent, Field(..., description="The reply prompt information.")]]
+
+    contents: list[
+        Annotated[
+            ConversationContent, Field(..., description="The reply prompt information.")
+        ]
+    ]
 
     def parse_reply_prompt_information(self) -> str:
         """Parse the reply prompt information.

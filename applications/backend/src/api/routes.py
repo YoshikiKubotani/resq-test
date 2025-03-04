@@ -1,17 +1,21 @@
-from typing import Any
 import pathlib
+from typing import Any
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
-from src.api.schemas import HealthCheckResponse, QuestionGenerationRequest, ReplyGenerationRequest
+from src.api.schemas import (
+    HealthCheckResponse,
+    QuestionGenerationRequest,
+    ReplyGenerationRequest,
+)
 from src.domain.models import MailInformation, ReplyPromptInformation
-
 from src.domain.services.chat_service import ChatService
 
 router = APIRouter()
 
-@router.get('/health', response_model=HealthCheckResponse)
+
+@router.get("/health", response_model=HealthCheckResponse)
 async def health_check() -> Any:
     """Health check endpoint.
 
@@ -19,6 +23,7 @@ async def health_check() -> Any:
         Dict[str, str]: The status of the health check.
     """
     return {"status": "ok"}
+
 
 @router.post("/questions")
 async def generate_questions(request: QuestionGenerationRequest) -> StreamingResponse:
@@ -40,6 +45,7 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
         media_type="text/event-stream",
     )
 
+
 @router.post("/reply")
 async def generate_reply(request: ReplyGenerationRequest) -> StreamingResponse:
     """Generate replies based on the reply prompt information.
@@ -57,5 +63,5 @@ async def generate_reply(request: ReplyGenerationRequest) -> StreamingResponse:
 
     return StreamingResponse(
         chat_service.generate_reply_stream(reply_prompt_inforamtion),
-        media_type="text/event-stream"
+        media_type="text/event-stream",
     )
