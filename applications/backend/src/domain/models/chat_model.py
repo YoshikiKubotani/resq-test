@@ -68,3 +68,15 @@ class ReplyPromptInformation(BaseModel):
         contents (list[ConversationContent]): The reply prompt information for generating replies.
     """
     contents: list[Annotated[ConversationContent, Field(..., description="The reply prompt information.")]]
+
+    def parse_reply_prompt_information(self) -> str:
+        """Parse the reply prompt information.
+
+        Returns:
+            str: The parsed reply prompt information.
+        """
+        parsed_text: str = "[\n"
+        for content in self.contents:
+            parsed_text += content.model_dump_json(indent=4) + ",\n"
+        parsed_text += "]"
+        return parsed_text
