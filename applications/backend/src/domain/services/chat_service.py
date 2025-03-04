@@ -15,10 +15,10 @@ class ChatService:
         self.question_generation_prompt_path: pathlib.Path = prompt_directory / "question_generation_prompt.txt"
         self.reply_generation_prompt_path: pathlib.Path = prompt_directory / "reply_prompt.txt"
 
-        with open(self.question_generation_prompt_path, "r") as f:
+        with open(self.question_generation_prompt_path, "r", encoding="utf-8") as f:
             self.question_generation_prompt: str = f.read()
 
-        with open(self.reply_generation_prompt_path, "r") as f:
+        with open(self.reply_generation_prompt_path, "r", encoding="utf-8") as f:
             self.reply_generation_prompt: str = f.read()
 
         # OpenAI API async client
