@@ -19,7 +19,7 @@ async def health_check() -> Any:
     """
     return {"status": "ok"}
 
-@router.post("/api/chrome_generate_questions_stream")
+@router.post("/questions")
 async def generate_questions(request: QuestionGenerationRequest) -> StreamingResponse:
     mail_information: MailInformation = MailInformation(
         mail_information=request.mail_information
@@ -29,7 +29,7 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
         media_type="text/plain"
     )
 
-@router.post("/api/chrome_generate_reply_stream")
+@router.post("/reply")
 async def generate_reply(request: Request):
     data = await request.json()
     prompt_data = data.get("prompt", [])
