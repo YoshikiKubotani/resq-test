@@ -33,7 +33,7 @@ class ChatService:
             self.reply_generation_prompt: str = f.read()
 
         # OpenAI API async client
-        self.async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        self.async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY.get_secret_value())
 
     async def generate_questions_stream(self, mail_information: MailInformation) -> AsyncGenerator[str, None]:
         """Generate questions based on the mail information.

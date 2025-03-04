@@ -1,5 +1,6 @@
 
 import json
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, field_validator
 
 class Settings(BaseSettings, case_sensitive=True):
@@ -13,7 +14,7 @@ class Settings(BaseSettings, case_sensitive=True):
     PROJECT_NAME: str = "ResQ API"
 
     # OpenAI settings
-    OPENAI_API_KEY: str = ""
+    OPENAI_API_KEY: SecretStr = ""
     LLM_MODEL: str = "gpt-4o"
 
     # CORS_ALLOW_ORIGINS is a JSON-formatted list of origins that are allowed to make requests to the API.
