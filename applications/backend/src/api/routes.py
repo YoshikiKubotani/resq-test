@@ -33,13 +33,13 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
     )
 
 @router.post("/reply")
-async def generate_reply(request: ReplyGenerationRequest):
-    data = await request.json()
-    prompt_data = data.get("prompt", [])
-    user_id = data.get("user_id", "")  # user_idは現在未使用
-
+async def generate_reply(request: ReplyGenerationRequest) -> StreamingResponse:
+    reply_prompt_inforamtion: ReplyPromptInformation = ReplyPromptInformation(
+        contents=request.reply_prompt_information
+    )
     chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
+
     return StreamingResponse(
-        chat_service.generate_reply_stream(prompt_data),
+        chat_service.generate_reply_stream(reply_prompt_inforamtion),
         media_type="text/plain"
     )

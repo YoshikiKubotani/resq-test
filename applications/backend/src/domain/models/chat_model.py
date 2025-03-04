@@ -60,3 +60,11 @@ class MailInformation(BaseModel):
             parsed_text += content.model_dump_json(indent=4) + ",\n"
         parsed_text += "]"
         return parsed_text
+
+class ReplyPromptInformation(BaseModel):
+    """The reply prompt information.
+
+    Attributes:
+        contents (list[ConversationContent]): The reply prompt information for generating replies.
+    """
+    contents: list[Annotated[ConversationContent, Field(..., description="The reply prompt information.")]]

@@ -1,6 +1,7 @@
-from .chat_model import ConversationContent, MailInformation
+from .chat_model import ConversationContent, MailInformation, ReplyPromptInformation
 
 __all__ = [
     "ConversationContent",
-    "MailInformation"
+    "MailInformation",
+    "ReplyPromptInformation"
 ]
