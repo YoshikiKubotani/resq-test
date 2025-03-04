@@ -1,8 +1,9 @@
 from typing import Generator, List, Any
 from src.domain.models import MailInformation
+from src.settings import settings
 
-# OpenAIクライアントのシングルトンインスタンス
-client = OpenAI(api_key=OPENAI_API_KEY)
+# OpenAI API async client
+async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
 class ChatService:
     @staticmethod
