@@ -1,12 +1,21 @@
+from typing import Any
+
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
+
+from src.api.schemas import HealthCheckResponse
 from ..services.chat_service import ChatService
 
 router = APIRouter()
 
-@router.get('/')
-async def root():
-    return {"message": "Hello from lambda"}
+@router.get('/health', response_model=HealthCheckResponse)
+async def health_check() -> Any:
+    """Health check endpoint.
+
+    Returns:
+        Dict[str, str]: The status of the health check.
+    """
+    return {"status": "ok"}
 
 @router.post("/api/chrome_generate_questions_stream")
 async def generate_questions(request: Request):
