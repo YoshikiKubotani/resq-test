@@ -24,17 +24,17 @@ class MailInformation(BaseModel):
     """The mail information for generating questions.
 
     Attributes:
-        mail_information (list[ConversationContent]): The mail information for generating questions.
+        contents (list[ConversationContent]): The mail information for generating questions.
     """
-    mail_information: list[Annotated[ConversationContent, Field(..., description="The mail information for generating questions.")]]
+    contents: list[Annotated[ConversationContent, Field(..., description="The mail information for generating questions.")]]
 
-    @field_validator("mail_information", mode="after")
+    @field_validator("contents", mode="after")
     @classmethod
-    def is_valid_infomation(cls, mail_information: list[ConversationContent]) -> list[ConversationContent]:
+    def is_valid_infomation(cls, contents: list[ConversationContent]) -> list[ConversationContent]:
         """Validate the mail information.
 
         Args:
-            mail_information (list[ConversationContent]): The mail information.
+            contents (list[ConversationContent]): The mail information.
 
         Raises:
             ValueError: If the mail information is invalid.
@@ -42,9 +42,10 @@ class MailInformation(BaseModel):
         Returns:
             list[ConversationContent]: The validated mail information.
         """
-        if len(mail_information) != 3:
+        if len(contents) != 3:
             raise ValueError("Mail information must contain 3 elements; incoming mail content, sender information, and receiver information.")
-        for content in mail_information:
+        for content in contents:
             if content.role != Role.SYSTEM:
                 raise ValueError("Mail information must contain system content only.")
-        return mail_information
+        return contents
+

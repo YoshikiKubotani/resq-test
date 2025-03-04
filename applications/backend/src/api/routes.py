@@ -23,7 +23,7 @@ async def health_check() -> Any:
 @router.post("/questions")
 async def generate_questions(request: QuestionGenerationRequest) -> StreamingResponse:
     mail_information: MailInformation = MailInformation(
-        mail_information=request.mail_information
+        contents=request.mail_information
     )
     chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
 
