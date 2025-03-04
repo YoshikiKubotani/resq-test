@@ -1,17 +1,30 @@
-from typing import Generator, List, Any
+import pathlib
 from src.domain.models import MailInformation
 from src.settings import settings
 
-# OpenAI API async client
-async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
 class ChatService:
-    @staticmethod
-    def generate_questions_stream(mail_information: MailInformation) -> Generator[str, None, None]:
-        prompt = generate_question_prompt(mail_information)
+    """The service for interacting with the OpenAI chat API."""
+    def __init__(self, prompt_directory: pathlib.Path) -> None:
+        """Initialize the ChatService.
 
-        try:
-            response = client.chat.completions.create(
+        Args:
+            prompt_directory (pathlib.Path): The directory containing the prompt files.
+        """
+        # The path to the question generation prompt file.
+        self.question_generation_prompt_path: pathlib.Path = prompt_directory / "question_generation_prompt.txt"
+        self.reply_generation_prompt_path: pathlib.Path = prompt_directory / "reply_prompt.txt"
+
+        with open(self.question_generation_prompt_path, "r") as f:
+            self.question_generation_prompt: str = f.read()
+
+        with open(self.reply_generation_prompt_path, "r") as f:
+            self.reply_generation_prompt: str = f.read()
+
+        # OpenAI API async client
+        self.async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+
+    async def generate_questions_stream(self, mail_information: MailInformation) -> AsyncGenerator[str, None]:
                 model="gpt-4o",
                 messages=[{"role": "system", "content": prompt}],
                 response_format={"type": "json_object"},
@@ -28,8 +41,7 @@ class ChatService:
             print(e)
             yield f"Error: {str(e)}"
 
-    @staticmethod
-    def generate_reply_stream(prompt_data: List[Any]) -> Generator[str, None, None]:
+    async def generate_reply_stream(self, prompt_data: list[Any]) -> AsyncGenerator[str, None]:
         prompt = generate_reply_prompt(prompt_data)
 
         try:

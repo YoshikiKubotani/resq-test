@@ -1,4 +1,5 @@
 from typing import Any
+import pathlib
 
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
@@ -24,8 +25,10 @@ async def generate_questions(request: QuestionGenerationRequest) -> StreamingRes
     mail_information: MailInformation = MailInformation(
         mail_information=request.mail_information
     )
+    chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
+
     return StreamingResponse(
-        ChatService.generate_questions_stream(mail_information),
+        chat_service.generate_questions_stream(mail_information),
         media_type="text/plain"
     )
 
@@ -35,7 +38,8 @@ async def generate_reply(request: Request):
     prompt_data = data.get("prompt", [])
     user_id = data.get("user_id", "")  # user_idは現在未使用
 
+    chat_service: ChatService = ChatService(prompt_directory=pathlib.Path("data"))
     return StreamingResponse(
-        ChatService.generate_reply_stream(prompt_data),
+        chat_service.generate_reply_stream(prompt_data),
         media_type="text/plain"
     )
