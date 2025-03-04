@@ -13,8 +13,9 @@ class Settings(BaseSettings, case_sensitive=True):
     """
     PROJECT_NAME: str = "ResQ API"
 
-    # OpenAI API key
+    # OpenAI settings
     OPENAI_API_KEY: str = ""
+    LLM_MODEL: str = "gpt-4o"
 
     # CORS_ALLOW_ORIGINS is a JSON-formatted list of origins that are allowed to make requests to the API.
     # e.g: '["http://localhost", "http://localhost:8080"]'
