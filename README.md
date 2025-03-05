@@ -42,16 +42,16 @@ ResQは、OpenAIのLLMを活用してメール返信を支援するシステム�
 
 4. コンテナにアクセス
 
-  - バックエンド
-    ```bash
-    # environments/dev下で実行
-    docker compose exec backend bash
-    ```
+   - バックエンド
+       ```bash
+       # environments/dev下で実行
+       docker compose exec backend bash
+       ```
 
-  - Chrome拡張アプリケーション
-    ```bash
-    # environments/dev下で実行
-    docker compose exec chrome-extension bash
-    ```
+   - Chrome拡張アプリケーション
+       ```bash
+       # environments/dev下で実行
+       docker compose exec chrome-extension bash
+       ```
 
 起動したコンテナに入った後のセットアップ手順については、それぞれの`docs`内にある各サービスのドキュメントを参照してください。
