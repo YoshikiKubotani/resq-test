@@ -97,3 +97,13 @@ test = "pytest tests --cov=src --cov-report term-missing --durations 5"
 format = ["ruff-lint", "ruff-format", "mdformat"]
 lint = ["ruff-lint-check", "ruff-format-check", "mdformat-check", "mypy"]
 test-all = ["lint", "test"]
+
+[dependency-groups]
+dev = [
+    "mdformat-footnote>=0.1.1",
+    "mdformat-frontmatter>=2.0.8",
+    "mdformat-gfm>=0.4.1",
+    "mypy>=1.15.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.9.9",
+]
