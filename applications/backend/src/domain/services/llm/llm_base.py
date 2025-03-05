@@ -1,10 +1,10 @@
 import pathlib
-from datetime import datetime
-from typing import AsyncGenerator, TypeVar, Generic
-from zoneinfo import ZoneInfo
 from abc import ABC, abstractmethod
+from datetime import datetime
+from typing import AsyncGenerator, Generic, TypeVar
+from zoneinfo import ZoneInfo
 
-from jinja2 import Environment, FileSystemLoader, Template, StrictUndefined
+from jinja2 import Environment, FileSystemLoader, StrictUndefined, Template
 from openai import AsyncOpenAI, AsyncStream
 from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
@@ -19,6 +19,7 @@ logger = setup_logger(__name__)
 
 InputDomainModel = TypeVar("InputDomainModel")
 OutputDomainModel = TypeVar("OutputDomainModel")
+
 
 class LLMBase(ABC, Generic[InputDomainModel, OutputDomainModel]):
     """Base class for LLM services with common streaming functionality."""
@@ -35,7 +36,9 @@ class LLMBase(ABC, Generic[InputDomainModel, OutputDomainModel]):
             system_prompt_path (pathlib.Path): Path to the system prompt file
         """
         # Initialize OpenAI client
-        self._async_client: AsyncOpenAI = AsyncOpenAI(api_key=settings.OPENAI_API_KEY.get_secret_value())
+        self._async_client: AsyncOpenAI = AsyncOpenAI(
+            api_key=settings.OPENAI_API_KEY.get_secret_value()
+        )
 
         # Setup Jinja2 environment
         self._env: Environment = Environment(
@@ -65,7 +68,9 @@ class LLMBase(ABC, Generic[InputDomainModel, OutputDomainModel]):
         try:
             # Render the template
             input_message: str = self._template.render(**template_values)
-            logger.info(f"Input Message:\n{input_message}", color="gray", show_prefix=True)
+            logger.info(
+                f"Input Message:\n{input_message}", color="gray", show_prefix=True
+            )
 
             stream: AsyncStream[
                 ChatCompletionChunk
@@ -172,7 +177,9 @@ class LLMBase(ABC, Generic[InputDomainModel, OutputDomainModel]):
         try:
             # Render the template
             input_message: str = self._template.render(**template_values)
-            logger.info(f"Input Message:\n{input_message}", color="gray", show_prefix=True)
+            logger.info(
+                f"Input Message:\n{input_message}", color="gray", show_prefix=True
+            )
 
             response: ChatCompletion = await self._async_client.chat.completions.create(
                 model="gpt-4",
@@ -197,7 +204,6 @@ class LLMBase(ABC, Generic[InputDomainModel, OutputDomainModel]):
         except Exception as e:
             logger.error(e)
             return f"Error: {str(e)}"
-
 
     @abstractmethod
     async def astream(self, input: InputDomainModel) -> AsyncGenerator[str, None]:

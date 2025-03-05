@@ -4,7 +4,7 @@ from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):  # type: ignore
+class Settings(BaseSettings):
     """The settings for the application.
 
     Attributes:
@@ -23,7 +23,7 @@ class Settings(BaseSettings):  # type: ignore
     LLM_MODEL: str = "gpt-4o"
 
     # CORS_ALLOW_ORIGINS is a JSON-formatted list of origins that are allowed to make requests to the API.
-    # e.g: '["http://localhost", "http://localhost:8080"]'
+    # e.g: '["http://localhost", "http://localhost:3000"]'
     CORS_ALLOW_ORIGINS: str
 
     @field_validator("CORS_ALLOW_ORIGINS", mode="before")

@@ -29,8 +29,12 @@ class QuestionGenerationRequest(BaseModel):
         api_key (SecretStr): OpenAI API key
     """
 
-    email_information: Annotated[EmailInformation, Field(..., description="Basic email information")]
-    user_information: Annotated[UserInformation, Field(..., description="User information")]
+    email_information: Annotated[
+        EmailInformation, Field(..., description="Basic email information")
+    ]
+    user_information: Annotated[
+        UserInformation, Field(..., description="User information")
+    ]
     api_key: Annotated[SecretStr, Field(..., description="OpenAI API key")]
 
 
@@ -46,9 +50,20 @@ class ReplyGenerationRequest(BaseModel):
         api_key (SecretStr): OpenAI API key
     """
 
-    email_information: Annotated[EmailInformation, Field(..., description="Basic email information")]
-    user_information: Annotated[UserInformation, Field(..., description="User information")]
-    customization: Annotated[ReplyCustomization, Field(..., description="Reply customization settings")]
-    selected_choices: Annotated[list[QuestionChoice], Field(..., description="list of questions and their selected answers")]
-    current_reply: Annotated[str | None, Field(None, description="Current reply content when editing")]
+    email_information: Annotated[
+        EmailInformation, Field(..., description="Basic email information")
+    ]
+    user_information: Annotated[
+        UserInformation, Field(..., description="User information")
+    ]
+    customization: Annotated[
+        ReplyCustomization, Field(..., description="Reply customization settings")
+    ]
+    selected_choices: Annotated[
+        list[QuestionChoice],
+        Field(..., description="list of questions and their selected answers"),
+    ]
+    current_reply: Annotated[
+        str | None, Field(None, description="Current reply content when editing")
+    ]
     api_key: Annotated[SecretStr, Field(..., description="OpenAI API key")]

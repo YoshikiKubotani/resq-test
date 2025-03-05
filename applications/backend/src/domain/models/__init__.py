@@ -1,10 +1,10 @@
 from .chat_model import (
     EmailInformation,
-    UserInformation,
     QuestionChoice,
-    ReplyCustomization,
     QuestionGenerationInput,
+    ReplyCustomization,
     ReplyGenerationInput,
+    UserInformation,
 )
 
 __all__ = [

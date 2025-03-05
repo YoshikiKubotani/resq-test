@@ -1,4 +1,4 @@
-from typing import Any, Annotated
+from typing import Annotated, Any
 
 from pydantic import BaseModel, Field
 
@@ -20,9 +20,13 @@ class EmailInformation(BaseModel):
     text: Annotated[str, Field(..., description="Email content in text format")]
     title: Annotated[str, Field(..., description="Email subject")]
     sender: Annotated[str, Field(..., description="Sender's email address")]
-    receive_time: Annotated[str, Field(..., description="Time when the email was received")]
+    receive_time: Annotated[
+        str, Field(..., description="Time when the email was received")
+    ]
     current_time: Annotated[str, Field(..., description="Current time")]
-    past_html: Annotated[str | None, Field(None, description="Past email correspondence in HTML format")]
+    past_html: Annotated[
+        str | None, Field(None, description="Past email correspondence in HTML format")
+    ]
 
     def get_incoming_mail_section(self) -> str:
         """Get the incoming mail section.
@@ -69,11 +73,15 @@ class UserInformation(BaseModel):
 
     full_name: Annotated[str, Field(..., description="User's full name")]
     email: Annotated[str, Field(..., description="User's email address")]
-    affiliation: Annotated[str, Field(..., description="User's organization or affiliation")]
+    affiliation: Annotated[
+        str, Field(..., description="User's organization or affiliation")
+    ]
     language: Annotated[str, Field(..., description="User's preferred language")]
     role: Annotated[str, Field(..., description="User's role")]
     signature: Annotated[str | None, Field(None, description="User's email signature")]
-    other_info: Annotated[str | None, Field(None, description="Additional user information")]
+    other_info: Annotated[
+        str | None, Field(None, description="Additional user information")
+    ]
 
     def get_audience_info_section(self) -> str:
         """Get the audience information section.
@@ -127,12 +135,16 @@ class ReplyCustomization(BaseModel):
 
     sender_role: Annotated[str, Field(..., description="Role of the sender")]
     recipient_role: Annotated[str, Field(..., description="Role of the recipient")]
-    formality: Annotated[str, Field(..., description="Level of formality for the reply")]
+    formality: Annotated[
+        str, Field(..., description="Level of formality for the reply")
+    ]
     tone: Annotated[str, Field(..., description="Tone of the reply")]
     urgency: Annotated[str | None, Field(None, description="Level of urgency")]
     length: Annotated[str, Field(..., description="Desired length of the reply")]
     purpose: Annotated[str | None, Field(None, description="Purpose of the reply")]
-    additional_request: Annotated[str | None, Field(None, description="Additional customization requests")]
+    additional_request: Annotated[
+        str | None, Field(None, description="Additional customization requests")
+    ]
 
     def get_customization_section(self, is_revising: bool) -> str:
         """Get the customization section.
@@ -196,9 +208,16 @@ class ReplyGenerationInput(BaseModel):
 
     email_info: Annotated[EmailInformation, Field(..., description="Email information")]
     user_info: Annotated[UserInformation, Field(..., description="User information")]
-    customization: Annotated[ReplyCustomization, Field(..., description="Reply customization settings")]
-    selected_choices: Annotated[list[QuestionChoice], Field(..., description="List of questions and their selected answers")]
-    current_reply: Annotated[str | None, Field(None, description="Current reply content when editing")]
+    customization: Annotated[
+        ReplyCustomization, Field(..., description="Reply customization settings")
+    ]
+    selected_choices: Annotated[
+        list[QuestionChoice],
+        Field(..., description="List of questions and their selected answers"),
+    ]
+    current_reply: Annotated[
+        str | None, Field(None, description="Current reply content when editing")
+    ]
 
     def get_template_values(self) -> dict[str, Any]:
         """Get template values for reply generation.
@@ -214,5 +233,7 @@ class ReplyGenerationInput(BaseModel):
             "signature": self.user_info.get_signature_section(),
             "selected_choices": self.selected_choices,
             "current_reply": self.current_reply,
-            "customization": self.customization.get_customization_section(is_revising=bool(self.current_reply)),
+            "customization": self.customization.get_customization_section(
+                is_revising=bool(self.current_reply)
+            ),
         }

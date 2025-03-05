@@ -2,8 +2,9 @@ import pathlib
 from typing import AsyncGenerator
 
 from src.domain.models.chat_model import QuestionGenerationInput
-from .llm_base import LLMBase
 from src.utils import setup_logger
+
+from .llm_base import LLMBase
 
 logger = setup_logger(__name__)
 
@@ -17,9 +18,15 @@ class QuestionGenerationLLM(LLMBase[QuestionGenerationInput, str]):
         Args:
             prompt_directory (pathlib.Path): Directory containing prompt files
         """
-        template_path: pathlib.Path = prompt_directory / "templates" / "question_generation_prompt_template.jinja2"
+        template_path: pathlib.Path = (
+            prompt_directory
+            / "templates"
+            / "question_generation_prompt_template.jinja2"
+        )
         system_prompt_path: pathlib.Path = (
-            prompt_directory / "system_prompts" / "question_generation_system_prompt.txt"
+            prompt_directory
+            / "system_prompts"
+            / "question_generation_system_prompt.txt"
         )
 
         super().__init__(
@@ -27,7 +34,9 @@ class QuestionGenerationLLM(LLMBase[QuestionGenerationInput, str]):
             system_prompt_path=system_prompt_path,
         )
 
-    async def astream(self, input: QuestionGenerationInput) -> AsyncGenerator[str, None]:  # type: ignore
+    async def astream(  # type: ignore
+        self, input: QuestionGenerationInput
+    ) -> AsyncGenerator[str, None]:
         """Generate questions based on the mail information using streaming.
 
         Args:
