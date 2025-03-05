@@ -25,7 +25,7 @@
 
     http://localhost:8000/docs にアクセスすることで、Swagger UIから実際のエンドポイントの挙動を確認できます。
 
-    ![swagger ui sample](docs/images/swagger_ui_sample.png)
+    ![swagger ui sample](/docs/images/swagger_ui_sample.png)
 
 ## 開発ガイド
 
@@ -129,8 +129,7 @@ A: 以下の手順で実装できます：
            system_prompt_path = prompt_directory / "system_prompts" / "new_feature_system_prompt.txt"
            super().__init__(template_path, system_prompt_path)
    ```
-    > [! Impoertant]
-    > `LLMBase`では`astream`や`acompletion`の入出力の型安全性を確保するためジェネリクスを使用しています。従って、継承して具象クラスを定義する際には、適切な型引数（`InputType`, `OutputType`）を指定してください。
+   
 
 2. `LLMBase`を継承し、必要なメソッドを実装
    - `astream`: ストリーミング形式でのレスポンス生成
@@ -142,6 +141,8 @@ A: 以下の手順で実装できます：
 
 4. `ChatService`に（もしくは必要に応じて新たなサービスクラスを作成して）新機能を統合
 
+> [!IMPORTANT]
+> `LLMBase`では`astream`や`acompletion`の入出力の型安全性を確保するためジェネリクスを使用しています。従って、継承して具象クラスを定義する際には、適切な型引数（`InputType`, `OutputType`）を指定してください。
 
 ## システム構成の詳細
 
