@@ -15,7 +15,7 @@ services:
     volumes:
         - ../../applications/backend:/home/trailblazer/${PROJECT_NAME_ENV}-backend
     ports:
-        - 8001:8000
+        - 8000:8000
 
   chrome-extension:
     build:
