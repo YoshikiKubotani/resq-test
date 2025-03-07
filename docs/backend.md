@@ -129,7 +129,7 @@ A: 以下の手順で実装できます：
            system_prompt_path = prompt_directory / "system_prompts" / "new_feature_system_prompt.txt"
            super().__init__(template_path, system_prompt_path)
    ```
-   
+
 
 2. `LLMBase`を継承し、必要なメソッドを実装
    - `astream`: ストリーミング形式でのレスポンス生成

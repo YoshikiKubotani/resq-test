@@ -17,6 +17,26 @@ ResQは、OpenAIのLLMを活用してメール返信を支援するシステム�
 
 各サービスの詳細については、`docs/`内にある各サービスのドキュメントを参照してください。
 
+### フォルダ構成
+
+```
+ResQ/
+├── .github/               # GitHub関連
+│   ├── ci.yaml            # コードチェックを行うワークフロー定義
+│   └── deploy.yaml        # AWS lambda上へのデプロイを行うワークフロー定義
+├── applications/          # アプリケーションの実装
+│   ├── backend/           # バックエンド実装（詳しくは docs/backend.md を参照）
+│   └── chrome-extension/  # 拡張機能のフロントエンド実装
+├── docs/                  # ドキュメント関連
+├── environments/          # Docker関連
+│   ├── ci/                # CI用のcompose定義
+│   ├── deploy/            # デプロイ用のcompose定義
+│   ├── dev/               # 開発用のcompose定義
+│   ├── Dockerfile.backend # バックエンド用のDockerfile
+│   └── Dockerfile.chrome  # Chrome拡張用のDockerfile
+└── README.md
+```
+
 ## 開発環境のセットアップ
 
 以下の手順で開発環境を構築できます：
@@ -32,6 +52,10 @@ ResQは、OpenAIのLLMを活用してメール返信を支援するシステム�
    ```
 
    作成された`backend.env`に必要な環境変数を指定する
+
+> [!Note]
+> `OPENAI_API_KEY`には、OpenAIの[ダッシュボード](https://platform.openai.com/api-keys)で発行できるAPIキーを指定して下さい。
+> `CORS_ALLOW_ORIGINS`には、バックエンドへの接続を許容するオリジンを記入してください。
 
 3. コンテナの起動
    ```bash
