@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" href="settings.css">
+    <script type="module" src="settings.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-4 mb-4">User Settings</h2>
+        <form id="userInfoForm">
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" class="form-control" id="fullName" name="fullName">
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email">
+        </div>
+        <div class="form-group">
+            <label for="affiliation">Affiliation</label>
+            <input type="text" class="form-control" id="affiliation" name="affiliation">
+        </div>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select class="form-control" id="role" name="role">
+            <option value="">Please select</option>
+            <option value="University Student">University Student</option>
+            <option value="Graduate Student">Graduate Student</option>
+            <option value="Job Seeker">Job Seeker</option>
+            <option value="New Employee">New Employee</option>
+            <option value="Employee">Employee</option>
+            <option value="Manager">Manager</option>
+            <option value="Executive">Executive</option>
+            <option value="Professor">Professor</option>
+            <option value="Associate Professor">Associate Professor</option>
+            <option value="Assistant Professor">Assistant Professor</option>
+            <option value="Researcher">Researcher</option>
+            <option value="Freelancer">Freelancer</option>
+            <option value="Self-employed">Self-employed</option>
+            <option value="Homemaker">Homemaker</option>
+            <option value="Retired">Retired</option>
+            <option value="Part-time Job">Part-time Job</option>
+            </select>
+            <div id="otherRoleDiv" class="mt-2" style="display:none;">
+                <label for="otherRole">Please specify</label>
+                <input type="text" class="form-control" id="otherRole" name="otherRole">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="language">Language</label>
+            <select class="form-control" id="language" name="language">
+            <option value="japanese">Japanese</option>
+            <option value="english">English</option>
+            <option value="chinese">Chinese</option>
+            <option value="korean">Korean</option>
+            <option value="spanish">Spanish</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="signature">Signature</label>
+            <textarea class="form-control" id="signature" name="signature" rows="5"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="otherInfo">Additional Information</label>
+            <textarea class="form-control" id="otherInfo" name="otherInfo" rows="5" placeholder="e.g., Phone: XXX-YYYYY-ZZZZ"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mb-4">Save</button>
+        <div id="message" style="display: none;">Settings have been saved!</div>
+        </form>
+    </div>
+</body>
+</html>
