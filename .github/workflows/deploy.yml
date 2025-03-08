@@ -1,10 +1,6 @@
 name: Deploy Application
 
 on:
-  push:
-    branches:
-      - develop
-      - latest
   workflow_dispatch:
     inputs:
       environment:
