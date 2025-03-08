@@ -1,0 +1,90 @@
+name: Terraform Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+        default: 'dev'
+    secrets:
+      PROJECT_NAME:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+      ALLOWED_ORIGINS:
+        required: true
+      LAMBDA_MEMORY:
+        required: true
+      LAMBDA_TIMEOUT:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  TF_WORKING_DIR: terraform
+  AWS_REGION: ap-northeast-1
+  SESSION_NAME: gh-oidc-${{ github.run_id }}-${{ github.run_attempt }}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}-github-actions-role
+          role-session-name: ${{ env.SESSION_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.4"
+
+      - name: Terraform Format
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform fmt -check
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
+
+      - name: Parse Allowed Origins
+        id: parse-origins
+        run: |
+          # Convert comma-separated string to JSON array
+          ORIGINS_JSON=$(echo "${{ secrets.ALLOWED_ORIGINS }}" | jq -R 'split(",") | map(trim)')
+          echo "origins=${ORIGINS_JSON}" >> $GITHUB_OUTPUT
+
+      - name: Terraform Plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform plan \
+            -var="environment=${{ inputs.environment }}" \
+            -var="project_name=${{secrets.PROJECT_NAME }}" \
+            -var="image_tag=${{ inputs.image-tag }}" \
+            -var="lambda_memory_size=${{ secrets.LAMBDA_MEMORY }}" \
+            -var="lambda_timeout=${{ secrets.LAMBDA_TIMEOUT }}" \
+            -var="github_repository=${{ github.repository }}" \
+            -var="allowed_origins=${{ steps.parse-origins.outputs.origins }}" \
+            -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/latest'
+        run: terraform apply -auto-approve tfplan

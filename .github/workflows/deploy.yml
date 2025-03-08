@@ -1,0 +1,72 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - develop
+      - latest
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+
+env:
+  AWS_REGION: ap-northeast-1 # Use the same region as specified in "provider.tf"
+  IMAGE_NAME: resq-lambda-web-adapter
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || (github.ref == 'refs/heads/latest' && 'prod' || 'dev') }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Image Tag
+        id: image-tag
+        run: |
+          TAG=$(date +'%Y%m%d-%H%M%S')-${GITHUB_SHA::7}
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.PROJECT_NAME }}-${{ inputs.environment || (github.ref == 'refs/heads/latest' && 'prod' || 'dev') }}-github-actions-role
+          role-session-name: gh-oidc-${{ github.run_id }}-${{ github.run_attempt }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.PROJECT_NAME }}-${{ inputs.environment || (github.ref == 'refs/heads/latest' && 'prod' || 'dev') }}
+          IMAGE_TAG: ${{ steps.image-tag.outputs.tag }}
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            -f environments/Dockerfile.deploy .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Call Terraform Workflow
+        uses: ./.github/workflows/terraform-reusable.yml
+        with:
+          image-tag: ${{ steps.image-tag.outputs.tag }}
+          environment: ${{ inputs.environment || (github.ref == 'refs/heads/latest' && 'prod' || 'dev') }}
+        secrets:
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          LAMBDA_MEMORY: ${{ secrets.LAMBDA_MEMORY }}
+          LAMBDA_TIMEOUT: ${{ secrets.LAMBDA_TIMEOUT }}
