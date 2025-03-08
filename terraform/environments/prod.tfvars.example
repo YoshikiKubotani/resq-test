@@ -1,0 +1,11 @@
+environment      = "prod"
+lambda_memory_size = 1024
+lambda_timeout     = 60
+github_repository  = "your-org/your-repo"
+github_branch      = "latest"
+
+# Allowed origins for Lambda Function URL CORS
+allowed_origins = [
+  "https://prod.example.com",
+  "chrome-extension://<EXTENSION_ID>"
+]
