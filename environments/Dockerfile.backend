@@ -15,9 +15,7 @@ ARG RUN_UV_SYNC_AT_BUILD_TIME="false"
 ENV DEBIAN_FRONTEND="noninteractive" \
     LC_ALL="C.UTF-8" \
     LANG="C.UTF-8" \
-    PYTHONPATH=${APPLICATION_DIRECTORY} \
-	UV_TOOL_BIN_DIR=${UV_TOOL_BIN_DIRECTORY} \
-	PATH=${UV_TOOL_BIN_DIRECTORY}:${PATH}
+    PYTHONPATH=${APPLICATION_DIRECTORY}
 
 # Install Poethepoet directly using pip to type "poe" command without "uv run".
 RUN python3 -m pip install --upgrade pip setuptools requests wheel six urllib3 \
