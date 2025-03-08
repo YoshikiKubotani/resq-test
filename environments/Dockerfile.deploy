@@ -1,0 +1,26 @@
+ARG BASE_IMAGE=python:3.10.16-slim-bullseye
+FROM ${BASE_IMAGE}
+
+ARG PROJECT_NAME=resq-backend
+ARG APPLICATION_DIRECTORY=/var/app/
+ARG BACKEND_PATH=applications/backend
+
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.0 /lambda-adapter /opt/extensions/lambda-adapter
+
+ARG RUN_UV_SYNC_AT_BUILD_TIME="false"
+
+ENV DEBIAN_FRONTEND="noninteractive" \
+    LC_ALL="C.UTF-8" \
+    LANG="C.UTF-8" \
+    PYTHONPATH=${APPLICATION_DIRECTORY}
+
+# Install Poethepoet directly using pip to type "poe" command without "uv run".
+RUN python3 -m pip install uv poethepoet
+
+WORKDIR ${APPLICATION_DIRECTORY}
+COPY ${BACKEND_PATH}/pyproject.toml ${BACKEND_PATH}/uv.lock  ./
+COPY ${BACKEND_PATH}/src ./src
+COPY ${BACKEND_PATH}/data ./data
+RUN uv sync --no-dev
+
+CMD poe run-backend-prod
