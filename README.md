@@ -23,8 +23,9 @@ ResQは、OpenAIのLLMを活用してメールの返信を支援するシステ�
 ResQ/
 ├── .github/                   # GitHub関連
 │   ├── ci.yaml                # コードチェックを行うワークフロー定義
-│   ├── deploy.yaml            # AWS lambda上へのデプロイを行うワークフロー定義
-│   └── terraform-reusable.yml # Terraformによるplan/applyを行うワークフロー定義 (Reusable Workflows)
+│   ├── deploy.yaml            # アプリケーションのデプロイを行うワークフロー定義
+│   ├── terraform-ecr.yml      # Terraformによる Amazon ECR のプロビジョニングを行うワークフロー定義 (Reusable Workflows)
+│   └── terraform-complete.yml # Terraformによる Amazon ECR と AWS lambda のプロビジョニングを行うワークフロー定義 (Reusable Workflows)
 ├── applications/              # アプリケーションの実装
 │   ├── backend/               # バックエンド実装（詳しくは docs/backend.md を参照）
 │   └── chrome-extension/      # 拡張機能のフロントエンド実装
@@ -38,11 +39,11 @@ ResQ/
 │   └── Dockerfile.deploy      # デプロイ用のDockerfile
 ├── terraform/                 # インフラ定義
 │   ├── modules/               # Terraformモジュール
-│   │   ├── ecr/              # ECRリポジトリとIAMロール定義
-│   │   └── lambda/           # Lambda関数とその関連リソース定義
-│   ├── provider.tf           # AWSプロバイダー設定
-│   ├── variables.tf          # 変数定義
-│   └── main.tf               # モジュールの使用定義
+│   │   ├── ecr/               # ECRリポジトリとIAMロール定義
+│   │   └── lambda/            # Lambda関数とその関連リソース定義
+│   ├── provider.tf            # AWSプロバイダー設定
+│   ├── variables.tf           # 変数定義
+│   └── main.tf                # モジュールの使用定義
 └── README.md
 ```
 
@@ -95,11 +96,15 @@ ResQ/
 ### 前提条件
 
 1. AWS 関連の準備
+
    本プロジェクトでは、デプロイ先のクラウドプロバイダーとして [AWS](https://aws.amazon.com/jp/?nc2=h_lg) に対応しています。AWSのアカウントを所持されていない方は、まずアカウントを作成してください。
    アプリケーションで使用するサービスは [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/jp/ecr/) と　[AWS Lambda](https://aws.amazon.com/jp/lambda/) です。いずれのサービスも無料枠の範囲内であれば課金されることはありませんが、詳細はご自身でよく確認の上で利用してください。
 
    - [AWS Lambdaの料金](https://aws.amazon.com/jp/lambda/pricing/)
    - [Amazon ECRの料金](https://aws.amazon.com/jp/ecr/pricing/)
+
+> [!Important]
+> 本ドキュメントの手順に従ってデプロイを実行した結果、予期しない課金が発生した場合でも、当方は一切の責任を負いかねますので、あらかじめご了承ください。
 
    デプロイ先のリージョンは、デフォルトで `ap-northeast-1` に設定されているため、変更したい方は `terraform/provider.tf` と `.github/workflows/deploy.yml`の該当箇所を変更してください。
 
