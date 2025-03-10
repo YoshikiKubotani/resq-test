@@ -1,8 +1,8 @@
+github_repository  = "your-org/your-repo"
+project_name = "resq-backend"
 environment      = "dev"
 lambda_memory_size = 512
 lambda_timeout     = 30
-github_repository  = "your-org/your-repo"
-github_branch      = "develop"
 
 # Allowed origins for Lambda Function URL CORS
 allowed_origins = [

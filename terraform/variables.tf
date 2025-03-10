@@ -31,11 +31,6 @@ variable "github_repository" {
   type        = string
 }
 
-variable "github_branch" {
-  description = "GitHub branch to deploy"
-  type        = string
-}
-
 variable "allowed_origins" {
   description = "List of allowed origins for Lambda Function URL CORS"
   type        = list(string)
