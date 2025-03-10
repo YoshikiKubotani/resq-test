@@ -1,25 +1,15 @@
-name: Terraform Reusable Workflow
+name: Terraform ECR Workflow
 
 on:
   workflow_call:
     inputs:
-      image-tag:
-        required: true
-        type: string
       environment:
         required: true
         type: string
-        default: 'dev'
     secrets:
       PROJECT_NAME:
         required: true
       AWS_ACCOUNT_ID:
-        required: true
-      ALLOWED_ORIGINS:
-        required: true
-      LAMBDA_MEMORY:
-        required: true
-      LAMBDA_TIMEOUT:
         required: true
 
 permissions:
@@ -64,27 +54,17 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
 
-      - name: Parse Allowed Origins
-        id: parse-origins
-        run: |
-          # Convert comma-separated string to JSON array
-          ORIGINS_JSON=$(echo "${{ secrets.ALLOWED_ORIGINS }}" | jq -R 'split(",") | map(trim)')
-          echo "origins=${ORIGINS_JSON}" >> $GITHUB_OUTPUT
-
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
           terraform plan \
             -var="environment=${{ inputs.environment }}" \
-            -var="project_name=${{secrets.PROJECT_NAME }}" \
-            -var="image_tag=${{ inputs.image-tag }}" \
-            -var="lambda_memory_size=${{ secrets.LAMBDA_MEMORY }}" \
-            -var="lambda_timeout=${{ secrets.LAMBDA_TIMEOUT }}" \
+            -var="project_name=${{ secrets.PROJECT_NAME }}" \
             -var="github_repository=${{ github.repository }}" \
-            -var="allowed_origins=${{ steps.parse-origins.outputs.origins }}" \
+            -target=module.ecr \
             -out=tfplan
 
       - name: Terraform Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
-        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release'
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/latest'
         run: terraform apply -auto-approve tfplan
