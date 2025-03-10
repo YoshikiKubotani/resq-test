@@ -86,5 +86,5 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
-        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/latest'
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release'
         run: terraform apply -auto-approve tfplan
