@@ -25,7 +25,7 @@ async def health_check() -> Any:
     """Health check endpoint.
 
     Returns:
-        Dict[str, str]: The status of the health check.
+        HealthCheckResponse: The status of the health check.
     """
     return {"status": "ok"}
 

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
         PROJECT_NAME (str): The name of the project.
         OPENAI_API_KEY (str): The API key for the OpenAI API.
         LLM_MODEL (str): The language model to use for the OpenAI API.
-        CORS_ALLOW_ORIGINS (List[str]): The origins that are allowed to make requests to the API.
+        CORS_ALLOW_ORIGINS (list[str]): The origins that are allowed to make requests to the API.
     """
 
     model_config = SettingsConfigDict(case_sensitive=True)
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     @field_validator("CORS_ALLOW_ORIGINS", mode="before")
     @classmethod
-    def validate_cors_origins(cls, v: str) -> str:
+    def validate_cors_origins(cls, v: str) -> list[str]:
         """Validate the CORS_ALLOW_ORIGINS field.
 
         Args:
