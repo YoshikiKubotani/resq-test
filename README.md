@@ -37,10 +37,12 @@ ResQ/
 │   ├── Dockerfile.chrome      # Chrome拡張用のDockerfile
 │   └── Dockerfile.deploy      # デプロイ用のDockerfile
 ├── terraform/                 # インフラ定義
-│   ├── provider.tf            # AWSプロバイダー設定
-│   ├── variables.tf           # 変数定義
-│   ├── main.tf                # プロビジョニングするリソース定義
-│   └── environments/          # 環境別設定
+│   ├── modules/               # Terraformモジュール
+│   │   ├── ecr/              # ECRリポジトリとIAMロール定義
+│   │   └── lambda/           # Lambda関数とその関連リソース定義
+│   ├── provider.tf           # AWSプロバイダー設定
+│   ├── variables.tf          # 変数定義
+│   └── main.tf               # モジュールの使用定義
 └── README.md
 ```
 
@@ -130,28 +132,42 @@ ResQ/
 
 ### デプロイの実行
 
-デプロイは以下の2つの方法で実行できます：
+デプロイは GitHub Actions の "Deploy Application" ワークフローから実行できます：
 
-1. GitHub Actionsを使用したデプロイ
+1. 初回デプロイメント時
    - GitHub Actions の "Deploy Application" ワークフローから"Run Workflows"を選択
-   - 環境（dev/prod）を選択して実行
+   - 環境（dev/prod）を選択
+   - Stage: "ecr-only" を選択して実行
+   - これにより、ECRリポジトリとIAMロールが作成されます
 
-2. ローカルでのデプロイ
-   - 手動でterraform plan/applyを実行
+2. 2回目以降のデプロイメント
+   - GitHub Actions の "Deploy Application" ワークフローから"Run Workflows"を選択
+   - 環境（dev/prod）を選択
+   - Stage: "complete"（デフォルト）を選択して実行
+   - これにより、Dockerイメージのビルド・プッシュとLambda関数の更新が行われます
 
 ### デプロイの流れ
 
-1. Docker イメージのビルドとプッシュ
-   - コードから Docker イメージを作成
-   - AWS ECR にプッシュ
-   - イメージタグは `YYYYMMDD-HHMMSS-{commit_hash}` 形式
+```mermaid
+sequenceDiagram
+    participant GHA as GitHub Actions
+    participant ECR as Amazon ECR
+    participant TF as Terraform
+    participant Lambda as AWS Lambda
 
-2. Terraform による AWS リソースの更新
-   - GitHub OIDC による AWS 認証
-   - Lambda 関数の更新
-   - CORS 設定の適用
+    Note over GHA,Lambda: 初回デプロイメント（ECRのみ）
+    GHA->>TF: terraform init/plan/apply
+    TF->>ECR: ECRリポジトリ作成
+    TF->>GHA: IAMロール作成
 
-3. デプロイ結果の確認
-   - Lambda Function URL が出力される
-   - CloudWatch Logs でログを確認可能
+    Note over GHA,Lambda: 通常のデプロイメント
+    GHA->>GHA: Dockerイメージビルド
+    GHA->>ECR: イメージプッシュ
+    GHA->>TF: terraform init/plan/apply
+    TF->>Lambda: Lambda関数更新
+    Note right of Lambda: Function URLで公開
+```
 
+デプロイが完了すると：
+- Lambda Function URL が出力されます
+- CloudWatch Logs でログを確認できます
