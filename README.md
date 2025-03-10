@@ -86,22 +86,24 @@ ResQ/
 
 起動したコンテナに入った後のセットアップ手順については、それぞれの`docs`内にある各サービスのドキュメントを参照してください。
 
-## AWS Lambda へのデプロイ
+## アプリケーションバックエンドのデプロイ
 
-本プロジェクトでは、GitHub Actions と Terraform を使用して AWS Lambda への自動デプロイを行っています。プロジェクトで公開しているバックエンドサーバーを利用いただく場合には特に気にする必要はありませんが、ご自身で本アプリケーションを改良し、セルフホストしたい場合には以下の手順を参考にしてください。
+本プロジェクトでは、GitHub Actions と [Terraform](https://developer.hashicorp.com/terraform) を使用して AWS Lambda への自動デプロイを行っています。プロジェクトで公開しているバックエンドサーバーを利用いただく場合には特に気にする必要はありませんが、ご自身で本アプリケーションを改良し、セルフホストしたい場合には以下の手順を参考にしてください。
 
 ### 前提条件
 
-1. AWS アカウントの準備
-   - AWS アカウントを作成
-   - デプロイ先のリージョンを設定（デフォルト: ap-northeast-1）
+1. AWS 関連の準備
+   本プロジェクトでは、デプロイ先のクラウドプロバイダーとして [AWS](https://aws.amazon.com/jp/?nc2=h_lg) に対応しています。AWSのアカウントを所持されていない方は、まずアカウントを作成してください。
+   アプリケーションで使用するサービスは [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/jp/ecr/) と　[AWS Lambda](https://aws.amazon.com/jp/lambda/) です。いずれのサービスも無料枠の範囲内であれば課金されることはありませんが、詳細はご自身でよく確認の上で利用してください。
 
-> [!Note]
-> リージョンをデフォルトから変更する場合には、`terraform/provider.tf`と`.github/workflows/deploy.yml`の該当箇所を変更してください
+   - [AWS Lambdaの料金](https://aws.amazon.com/jp/lambda/pricing/)
+   - [Amazon ECRの料金](https://aws.amazon.com/jp/ecr/pricing/)
+
+   デプロイ先のリージョンは、デフォルトで `ap-northeast-1` に設定されているため、変更したい方は `terraform/provider.tf` と `.github/workflows/deploy.yml`の該当箇所を変更してください。
 
 2. GitHub リポジトリの Secrets 設定
 
-   以下の Secrets を GitHub リポジトリに設定してください：
+   本リポジトリを自分のGitHubアカウントに複製して、以下の Secrets を設定してください：
 
    ```yaml
    # 共通のSecrets（[Repository Secrets](https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow) として設定）
@@ -120,8 +122,11 @@ ResQ/
    ```
 
 3. ブランチ設定
-   - `develop` ブランチ: 開発環境へのデプロイ
-   - `latest` ブランチ: 本番環境へのデプロイ
+
+   本番環境と開発環境で異なるリソースをプロビジョニングする設定になっているため、以下の二つのブランチを作成してください
+
+   - `develop` ブランチ: 開発環境へのデプロイに使用
+   - `release` ブランチ: 本番環境へのデプロイに使用
 
 ### デプロイの実行
 
