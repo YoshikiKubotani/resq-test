@@ -21,19 +21,36 @@ env:
   IMAGE_NAME: resq-lambda-web-adapter
 
 jobs:
-  deploy:
+  prepare:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-
+    outputs:
+      image-tag: ${{ steps.image-tag.outputs.tag }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Generate Image Tag
         id: image-tag
         run: |
           TAG=$(date +'%Y%m%d-%H%M%S')-${GITHUB_SHA::7}
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+  deploy-ecr:
+    needs: prepare
+    if: inputs.stage == 'ecr-only'
+    uses: ./.github/workflows/terraform-ecr.yml
+    with:
+      environment: ${{ inputs.environment }}
+    secrets:
+      PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+
+  build-and-push:
+    needs: prepare
+    if: inputs.stage == 'complete'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -42,26 +59,15 @@ jobs:
           role-session-name: gh-oidc-${{ github.run_id }}-${{ github.run_attempt }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Call Terraform ECR Workflow
-        if: inputs.stage == 'ecr-only'
-        uses: ./.github/workflows/terraform-ecr.yml
-        with:
-          environment: ${{ inputs.environment }}
-        secrets:
-          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-
       - name: Login to Amazon ECR
-        if: inputs.stage == 'complete'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push Docker image
-        if: inputs.stage == 'complete'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}
-          IMAGE_TAG: ${{ steps.image-tag.outputs.tag }}
+          IMAGE_TAG: ${{ needs.prepare.outputs.image-tag }}
         run: |
           docker build \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
@@ -70,15 +76,16 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      - name: Call Terraform Complete Workflow
-        if: inputs.stage == 'complete'
-        uses: ./.github/workflows/terraform-complete.yml
-        with:
-          image-tag: ${{ steps.image-tag.outputs.tag }}
-          environment: ${{ inputs.environment }}
-        secrets:
-          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
-          LAMBDA_MEMORY: ${{ secrets.LAMBDA_MEMORY }}
-          LAMBDA_TIMEOUT: ${{ secrets.LAMBDA_TIMEOUT }}
+  deploy-complete:
+    needs: [prepare, build-and-push]
+    if: inputs.stage == 'complete'
+    uses: ./.github/workflows/terraform-complete.yml
+    with:
+      image-tag: ${{ needs.prepare.outputs.image-tag }}
+      environment: ${{ inputs.environment }}
+    secrets:
+      PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      LAMBDA_MEMORY: ${{ secrets.LAMBDA_MEMORY }}
+      LAMBDA_TIMEOUT: ${{ secrets.LAMBDA_TIMEOUT }}
