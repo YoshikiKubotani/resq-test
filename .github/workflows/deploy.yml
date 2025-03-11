@@ -42,6 +42,9 @@ jobs:
     secrets:
       PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    permissions:
+      id-token: write
+      contents: read
 
   build-and-push:
     needs: prepare
@@ -89,3 +92,6 @@ jobs:
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
       LAMBDA_MEMORY: ${{ secrets.LAMBDA_MEMORY }}
       LAMBDA_TIMEOUT: ${{ secrets.LAMBDA_TIMEOUT }}
+    permissions:
+      id-token: write
+      contents: read
