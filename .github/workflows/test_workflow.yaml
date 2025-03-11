@@ -1,6 +1,21 @@
 name: Test Workflow
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: environment
+      stage:
+        description: 'Deployment stage'
+        type: choice
+        options:
+          - ecr-only
+          - complete
+        default: 'complete'
+        required: true
+
 
 jobs:
   test:
