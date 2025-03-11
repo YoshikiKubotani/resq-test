@@ -47,7 +47,9 @@ jobs:
         uses: ./.github/workflows/terraform-ecr.yml
         with:
           environment: ${{ inputs.environment }}
-        secrets: inherit
+        secrets:
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
       - name: Login to Amazon ECR
         if: inputs.stage == 'complete'
@@ -74,4 +76,9 @@ jobs:
         with:
           image-tag: ${{ steps.image-tag.outputs.tag }}
           environment: ${{ inputs.environment }}
-        secrets: inherit
+        secrets:
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          LAMBDA_MEMORY: ${{ secrets.LAMBDA_MEMORY }}
+          LAMBDA_TIMEOUT: ${{ secrets.LAMBDA_TIMEOUT }}
