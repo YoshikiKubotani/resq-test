@@ -1,0 +1,24 @@
+ARG BASE_IMAGE=hashicorp/terraform:1.10.4
+FROM ${BASE_IMAGE}
+
+ARG PROJECT_NAME=resq-terraform
+ARG USER_NAME=trailblazer
+ARG GROUP_NAME=trailblazers
+ARG UID=1000
+ARG GID=1000
+ARG APPLICATION_DIRECTORY=/home/${PROJECT_NAME}
+
+ENV DEBIAN_FRONTEND="noninteractive" \
+    LC_ALL="C.UTF-8" \
+    LANG="C.UTF-8"
+
+# Install tflint. bash is required for the installation script.
+RUN apk add --no-cache bash curl aws-cli
+RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+# Add user. Without this, following process is executed as admin.
+RUN addgroup -g ${GID} ${GROUP_NAME} \
+    && adduser -D -s /bin/sh -u ${UID} -G ${GROUP_NAME} ${USER_NAME}
+
+USER ${USER_NAME}
+WORKDIR ${APPLICATION_DIRECTORY}

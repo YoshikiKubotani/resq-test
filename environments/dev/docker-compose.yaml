@@ -30,3 +30,18 @@ services:
         - ../../applications/chrome-extension:/home/node/${PROJECT_NAME_ENV}-chrome-extension
     ports:
         - 5173:5173
+
+  terraform:
+    build:
+      args:
+        - UID=${HOST_UID-1000}
+        - GID=${HOST_GID-1000}
+        - PROJECT_NAME=${PROJECT_NAME_ENV}-terraform
+      context: ../../
+      dockerfile: environments/Dockerfile.terraform
+    env_file:
+      - ../terraform.env
+    tty: true
+    entrypoint: bash
+    volumes:
+      - ../../terraform:/home/resq-terraform
