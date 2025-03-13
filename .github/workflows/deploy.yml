@@ -1,5 +1,5 @@
 name: Deploy Application
-
+permissions: {}
 on:
   workflow_dispatch:
     inputs:
@@ -7,7 +7,12 @@ on:
         description: 'Deployment environment'
         required: true
         type: environment
-
+defaults:
+  run:
+    shell: bash
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 env:
   AWS_REGION: ap-northeast-1
 
