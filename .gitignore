@@ -3,5 +3,6 @@
 .DS_Store
 
 /environments/backend.env
+/environments/terraform.env
 
 .vscode/
