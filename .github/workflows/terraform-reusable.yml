@@ -1,4 +1,4 @@
-name: Terraform Application Workflow
+name: aws-resource-provision
 permissions: {}
 on:
   workflow_call:
