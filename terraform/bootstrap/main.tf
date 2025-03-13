@@ -22,8 +22,8 @@ module "auth" {
 module "ecr" {
   source = "../modules/ecr"
 
-  environment            = var.environment
-  project_name          = var.project_name
+  environment              = var.environment
+  project_name             = var.project_name
   github_actions_role_name = module.auth.github_actions_role_name
 }
 
