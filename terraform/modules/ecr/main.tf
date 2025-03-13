@@ -1,3 +1,14 @@
+terraform {
+  required_version = "1.10.4"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.90.0"
+    }
+  }
+}
+
 # GitHub Actions OIDC Provider
 resource "aws_iam_openid_connect_provider" "github_actions" {
   url             = "https://token.actions.githubusercontent.com"

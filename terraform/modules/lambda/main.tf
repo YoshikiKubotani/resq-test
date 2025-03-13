@@ -1,3 +1,14 @@
+terraform {
+  required_version = "1.10.4"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.90.0"
+    }
+  }
+}
+
 # Lambda execution role
 resource "aws_iam_role" "lambda_execution" {
   name = "${var.project_name}-${var.environment}-lambda-role"
