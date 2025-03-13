@@ -11,8 +11,8 @@ module "ecr" {
 module "lambda" {
   source = "./modules/lambda"
 
-  environment         = var.environment
-  project_name        = var.project_name
+  environment        = var.environment
+  project_name       = var.project_name
   image_tag          = var.image_tag
   ecr_repository_url = module.ecr.repository_url
   lambda_memory_size = var.lambda_memory_size
