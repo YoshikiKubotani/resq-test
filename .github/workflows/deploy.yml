@@ -28,6 +28,8 @@ jobs:
     needs: [prepare]
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    outputs:
+      ecr-registry-url: ${{ steps.set-ecr-url.outputs.url }}
     permissions:
       id-token: write
       contents: read
@@ -59,12 +61,19 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
+      - name: Set ECR Repository URL
+        id: set-ecr-url
+        run: |
+          ECR_URL="${{ steps.login-ecr.outputs.registry }}/${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}"
+          echo "url=${ECR_URL}" >> $GITHUB_OUTPUT
+
   deploy:
     needs: [prepare, build-and-push]
     uses: ./.github/workflows/terraform-reusable.yml
     with:
       image-tag: ${{ needs.prepare.outputs.image-tag }}
       environment: ${{ inputs.environment }}
+      ecr-registry-url: ${{ needs.build-and-push.outputs.ecr-registry-url }}
     secrets:
       PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
