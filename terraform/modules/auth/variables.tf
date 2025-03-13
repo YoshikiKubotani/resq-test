@@ -8,7 +8,7 @@ variable "project_name" {
   type        = string
 }
 
-variable "github_actions_role_name" {
-  description = "GitHub Actions IAM Role name"
+variable "github_repository" {
+  description = "GitHub repository name (e.g., owner/repo)"
   type        = string
 }

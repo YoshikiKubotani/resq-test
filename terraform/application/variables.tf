@@ -14,6 +14,11 @@ variable "image_tag" {
   type        = string
 }
 
+variable "ecr_repository_url" {
+  description = "ECR Repository URL"
+  type        = string
+}
+
 variable "lambda_memory_size" {
   description = "Lambda function memory size (MB)"
   type        = number
@@ -24,11 +29,6 @@ variable "lambda_timeout" {
   description = "Lambda function timeout (seconds)"
   type        = number
   default     = 30
-}
-
-variable "github_repository" {
-  description = "GitHub repository name (e.g., owner/repo)"
-  type        = string
 }
 
 variable "allowed_origins" {

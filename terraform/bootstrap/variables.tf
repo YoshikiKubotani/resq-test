@@ -6,9 +6,10 @@ variable "environment" {
 variable "project_name" {
   description = "Project name"
   type        = string
+  default     = "resq-backend"
 }
 
-variable "github_actions_role_name" {
-  description = "GitHub Actions IAM Role name"
+variable "github_repository" {
+  description = "GitHub repository name (e.g., owner/repo)"
   type        = string
 }

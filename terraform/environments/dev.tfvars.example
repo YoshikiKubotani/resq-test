@@ -1,0 +1,3 @@
+github_repository  = "your-org/your-repo"
+project_name = "resq-backend"
+environment      = "dev"
