@@ -9,6 +9,10 @@ terraform {
   }
 }
 
+locals {
+  parsed_allowed_origins = jsonencode(var.allowed_origins)
+}
+
 # Lambda execution role
 resource "aws_iam_role" "lambda_execution" {
   name = "${var.project_name}-${var.environment}-lambda-role"
@@ -56,7 +60,7 @@ resource "aws_lambda_function_url" "app" {
   authorization_type = "NONE"
 
   cors {
-    allow_origins = var.allowed_origins
+    allow_origins = locals.parsed_allowed_origins
     allow_methods = ["GET", "POST", "OPTIONS"]
     allow_headers = ["Content-Type", "Authorization"]
     max_age       = 300
