@@ -22,3 +22,20 @@ services:
     tty: true
     volumes:
         - ../../applications/chrome-extension:/home/node/${PROJECT_NAME_ENV}-chrome-extension
+
+  terraform:
+    build:
+      args:
+        - UID=${HOST_UID-1000}
+        - GID=${HOST_GID-1000}
+        - PROJECT_NAME=${PROJECT_NAME_ENV}-terraform
+      context: ../../
+      dockerfile: environments/Dockerfile.terraform
+    environment:
+      - AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+    tty: true
+    entrypoint: bash
+    volumes:
+      - ../../terraform:/home/resq-terraform
