@@ -56,12 +56,12 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           output-credentials: true
 
-      - name: Build Docker images
+      - name: Boot up terraform container
         run: |
             AWS_ACCESS_KEY_ID=${{ steps.credentials.outputs.aws-access-key-id }} \
             AWS_SECRET_ACCESS_KEY=${{ steps.credentials.outputs.aws-secret-access-key }} \
             AWS_DEFAULT_REGION=${{ env.AWS_REGION }} \
-            docker compose up -d
+            docker compose up terraform -d
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
 
       - name: Change directory permissions
