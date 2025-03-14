@@ -60,6 +60,7 @@ jobs:
         run: |
             AWS_ACCESS_KEY_ID=${{ steps.credentials.outputs.aws-access-key-id }} \
             AWS_SECRET_ACCESS_KEY=${{ steps.credentials.outputs.aws-secret-access-key }} \
+            AWS_SESSION_TOKEN=${{ steps.credentials.outputs.aws-session-token }} \
             AWS_DEFAULT_REGION=${{ env.AWS_REGION }} \
             docker compose up terraform -d
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
