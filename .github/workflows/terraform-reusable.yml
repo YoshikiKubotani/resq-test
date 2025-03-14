@@ -58,8 +58,8 @@ jobs:
 
       - name: Build Docker images
         run: |
-            AWS_ACCESS_KEY_ID=${{ steps.credentials.outputs.access-key-id }} \
-            AWS_SECRET_ACCESS_KEY=${{ steps.credentials.outputs.secret-access-key }} \
+            AWS_ACCESS_KEY_ID=${{ steps.credentials.outputs.aws-access-key-id }} \
+            AWS_SECRET_ACCESS_KEY=${{ steps.credentials.outputs.aws-secret-access-key }} \
             AWS_DEFAULT_REGION=${{ env.AWS_REGION }} \
             docker compose up -d
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
