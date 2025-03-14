@@ -10,7 +10,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 env:
-  DOCKER_FILE_DIRECTORY: environments
   DOCKER_COMPOSE_DIRECTORY: environments/ci
 
 jobs:
