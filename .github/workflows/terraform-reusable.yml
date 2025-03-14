@@ -94,7 +94,7 @@ jobs:
             -var="ecr_repository_url=${{ inputs.ecr-registry-url }}" \
             -var="lambda_memory_size=${{ secrets.LAMBDA_MEMORY }}" \
             -var="lambda_timeout=${{ secrets.LAMBDA_TIMEOUT }}" \
-            -var="allowed_origins=${{ vars.ALLOWED_ORIGINS }}" \
+            -var='allowed_origins=${{ vars.ALLOWED_ORIGINS }}' \
             -out=tfplan
 
       - name: Terraform Apply
