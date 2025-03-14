@@ -10,7 +10,7 @@ terraform {
 }
 
 locals {
-  parsed_allowed_origins = jsonencode(var.allowed_origins)
+  parsed_allowed_origins = jsondecode(var.allowed_origins)
 }
 
 # Lambda execution role
