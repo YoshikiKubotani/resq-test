@@ -32,6 +32,6 @@ variable "lambda_timeout" {
 }
 
 variable "allowed_origins" {
-  description = "List of allowed origins for Lambda Function URL CORS in JSON form"
+  description = "An allowed origin for Lambda Function URL CORS"
   type        = string
 }
