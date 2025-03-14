@@ -83,7 +83,7 @@ jobs:
         id: parse-origins
         run: |
           # Convert comma-separated string to JSON array
-          ORIGINS_JSON=$(echo "${{ secrets.ALLOWED_ORIGINS }}" | jq -R 'split(",") | map(trim)')
+          ORIGINS_JSON=$(echo "${{ secrets.ALLOWED_ORIGINS }}" | jq -R 'split(",") | map(gsub("^ +| +$"; ""))')
           echo "origins=${ORIGINS_JSON}" >> $GITHUB_OUTPUT
 
       - name: Terraform Plan
