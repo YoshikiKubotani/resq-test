@@ -41,3 +41,25 @@ resource "aws_iam_role" "github_actions" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "github_actions" {
+  name = "${var.project_name}-${var.environment}-github-actions-policy"
+  role = aws_iam_role.github_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:CreateRole",
+          "iam:AttachRolePolicy",
+          "iam:GetRole",
+          "iam:DeleteRole",
+          "iam:DetachRolePolicy"
+        ]
+        Resource = "arn:aws:iam::*:role/${var.project_name}-${var.environment}-lambda-role"
+      }
+    ]
+  })
+}
