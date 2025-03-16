@@ -35,3 +35,8 @@ variable "allowed_origins" {
   description = "List of allowed origins for Lambda Function URL CORS"
   type        = list(string)
 }
+
+variable "accesible_ecr_arn" {
+  description = "ECR Repository ARN that lambda is allowed to access"
+  type = string
+}

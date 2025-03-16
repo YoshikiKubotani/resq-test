@@ -50,7 +50,7 @@ resource "aws_iam_role_policy" "lambda_ecr" {
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage"
         ]
-        Resource = "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/${var.project_name}-${var.environment}"
+        Resource = var.accesible_ecr_arn
       },
       {
         Effect = "Allow"
