@@ -9,6 +9,9 @@ terraform {
   }
 }
 
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 # Lambda execution role
 resource "aws_iam_role" "lambda_execution" {
   name = "${var.project_name}-${var.environment}-lambda-role"
@@ -31,6 +34,33 @@ resource "aws_iam_role" "lambda_execution" {
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
   role       = aws_iam_role.lambda_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# Add ECR access policy for Lambda execution role
+resource "aws_iam_role_policy" "lambda_ecr" {
+  name = "${var.project_name}-${var.environment}-lambda-ecr-policy"
+  role = aws_iam_role.lambda_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ]
+        Resource = "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/${var.project_name}-${var.environment}"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 # Lambda function
