@@ -39,4 +39,10 @@ resource "aws_ecr_repository" "main" {
   image_scanning_configuration {
     scan_on_push = true
   }
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "terraform"
+  }
 }

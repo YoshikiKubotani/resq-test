@@ -28,6 +28,12 @@ resource "aws_iam_role" "lambda_execution" {
       }
     ]
   })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "terraform"
+  }
 }
 
 # Attach basic Lambda execution policy
@@ -47,6 +53,7 @@ resource "aws_iam_role_policy" "lambda_ecr" {
       {
         Effect = "Allow"
         Action = [
+          "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage"
         ]
@@ -77,6 +84,12 @@ resource "aws_lambda_function" "app" {
     variables = {
       ENVIRONMENT = var.environment
     }
+  }
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "terraform"
   }
 }
 

@@ -43,6 +43,12 @@ resource "aws_iam_role" "github_actions" {
       }
     ]
   })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "terraform"
+  }
 }
 
 # IAM role manipulation policy for GitHub Action role
@@ -57,13 +63,23 @@ resource "aws_iam_role_policy" "github_actions" {
         Effect = "Allow"
         Action = [
           "iam:CreateRole",
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "iam:AttachRolePolicy",
           "iam:GetRole",
           "iam:DeleteRole",
           "iam:DetachRolePolicy",
           "iam:ListRolePolicies",
           "iam:ListAttachedRolePolicies",
-          "iam:PassRole"
+          "iam:PassRole",
+          "iam:PutRolePolicy",
+          "iam:GetRolePolicy",
+          "iam:TagRole",
+          "iam:UntagRole"
         ]
         Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project_name}-${var.environment}-lambda-role"
       }
@@ -96,7 +112,9 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
           "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload",
-          "ecr:PutImage"
+          "ecr:PutImage",
+          "ecr:TagResource",
+          "ecr:UntagResource"
         ]
         Resource = "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/${var.project_name}-${var.environment}"
       }
@@ -121,7 +139,9 @@ resource "aws_iam_role_policy" "github_actions_lambda" {
           "lambda:UpdateFunctionCode",
           "lambda:DeleteFunction",
           "lambda:GetFunction",
-          "lambda:ListFunctions"
+          "lambda:ListFunctions",
+          "lambda:TagResource",
+          "lambda:UntagResource"
         ]
         Resource = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${var.project_name}-${var.environment}"
       }
