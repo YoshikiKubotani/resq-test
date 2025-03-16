@@ -59,7 +59,7 @@ resource "aws_iam_role_policy" "lambda_ecr" {
           "ecr:DescribeRepositories",
           "ecr:DescribeImages"
         ]
-        Resource = var.accessible_ecr_arn
+        Resource = "*"
       },
       {
         Effect = "Allow"
