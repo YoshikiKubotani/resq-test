@@ -57,7 +57,9 @@ resource "aws_iam_role_policy" "github_actions" {
           "iam:AttachRolePolicy",
           "iam:GetRole",
           "iam:DeleteRole",
-          "iam:DetachRolePolicy"
+          "iam:DetachRolePolicy",
+          "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies"
         ]
         Resource = "arn:aws:iam::*:role/${var.project_name}-${var.environment}-lambda-role"
       }
