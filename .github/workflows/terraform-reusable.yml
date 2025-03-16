@@ -99,28 +99,6 @@ jobs:
             -out=tfplan
 
       - name: Terraform Apply
-        id: apply
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
         if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/latest'
-        continue-on-error: true
         run: docker compose exec -T terraform terraform -chdir=application apply -auto-approve tfplan
-
-      - name: Terraform Destroy on Apply Failure
-        if: steps.apply.outcome == 'failure'
-        working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
-        run: |
-          echo "Terraform apply failed. Cleaning up resources..."
-          docker compose exec -T terraform terraform -chdir=application destroy -auto-approve \
-            -var="environment=${{ inputs.environment }}" \
-            -var="project_name=${{ secrets.PROJECT_NAME }}" \
-            -var="image_tag=${{ inputs.image-tag }}" \
-            -var="ecr_repository_url=${{ inputs.ecr-registry-url }}" \
-            -var="lambda_memory_size=${{ secrets.LAMBDA_MEMORY }}" \
-            -var="lambda_timeout=${{ secrets.LAMBDA_TIMEOUT }}" \
-            -var='allowed_origins=${{ vars.ALLOWED_ORIGINS }}'
-
-      - name: Exit on Apply Failure
-        if: steps.apply.outcome == 'failure'
-        run: |
-          echo "Terraform apply failed and resources have been destroyed."
-          exit 1
