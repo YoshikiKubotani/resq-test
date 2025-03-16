@@ -38,11 +38,6 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
           "ecr:PutImage"
         ]
         Resource = aws_ecr_repository.main.arn
-      },
-      {
-        Effect = "Allow"
-        Action = "ecr:GetAuthorizationToken"
-        Resource = "*"
       }
     ]
   })
