@@ -53,13 +53,12 @@ resource "aws_iam_role_policy" "lambda_ecr" {
       {
         Effect = "Allow"
         Action = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage",
-          "ecr:DescribeRepositories",
-          "ecr:DescribeImages"
+          # "ecr:BatchCheckLayerAvailability",
+          # "ecr:GetDownloadUrlForLayer",
+          # "ecr:BatchGetImage"
+          "ecr:*"
         ]
-        Resource = "*"
+        Resource = var.accessible_ecr_arn
       },
       {
         Effect = "Allow"
