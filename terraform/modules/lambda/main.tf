@@ -63,11 +63,6 @@ resource "aws_iam_role_policy" "lambda_ecr" {
   })
 }
 
-resource "time_sleep" "wait_for_iam_role" {
-  depends_on = [aws_iam_role.lambda_execution]
-  create_duration = "10s"
-}
-
 # Lambda function
 resource "aws_lambda_function" "app" {
   function_name = "${var.project_name}-${var.environment}"
@@ -83,10 +78,6 @@ resource "aws_lambda_function" "app" {
       ENVIRONMENT = var.environment
     }
   }
-
-  depends_on = [
-    time_sleep.wait_for_iam_role
-  ]
 }
 
 # Lambda Function URL with configurable CORS
