@@ -94,7 +94,7 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
           "ecr:CompleteLayerUpload",
           "ecr:PutImage"
         ]
-        Resource = "arn:aws:iam::*:role/${var.project_name}-${var.environment}-github-actions-role"
+        Resource = "arn:aws:ecr:*:*:repository/${var.project_name}-${var.environment}"
       }
     ]
   })
