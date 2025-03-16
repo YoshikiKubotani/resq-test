@@ -78,6 +78,11 @@ resource "aws_lambda_function" "app" {
       ENVIRONMENT = var.environment
     }
   }
+
+  depend_on = [
+    aws_iam_role.lambda_execution,
+    aws_iam_role_policy_attachment.lambda_basic
+  ]
 }
 
 # Lambda Function URL with configurable CORS
