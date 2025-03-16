@@ -12,7 +12,7 @@ terraform {
 
 # GitHub Actions ECR Push Policy
 resource "aws_iam_role_policy" "github_actions_ecr" {
-  name = "${var.project_name}-${var.environment}-github-actions-policy"
+  name = "${var.project_name}-${var.environment}-github-actions-policy-ecr"
   role = var.github_actions_role_name
 
   policy = jsonencode({

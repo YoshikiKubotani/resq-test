@@ -42,8 +42,9 @@ resource "aws_iam_role" "github_actions" {
   })
 }
 
+# IAM role manipulation policy for GitHub Action role
 resource "aws_iam_role_policy" "github_actions" {
-  name = "${var.project_name}-${var.environment}-github-actions-policy"
+  name = "${var.project_name}-${var.environment}-github-actions-policy-auth"
   role = aws_iam_role.github_actions.id
 
   policy = jsonencode({
