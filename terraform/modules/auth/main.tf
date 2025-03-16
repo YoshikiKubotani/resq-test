@@ -141,7 +141,8 @@ resource "aws_iam_role_policy" "github_actions_lambda" {
           "lambda:GetFunction",
           "lambda:ListFunctions",
           "lambda:TagResource",
-          "lambda:UntagResource"
+          "lambda:UntagResource",
+          "lambda:ListVersionsByFunction"
         ]
         Resource = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${var.project_name}-${var.environment}"
       }
