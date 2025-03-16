@@ -9,6 +9,9 @@ terraform {
   }
 }
 
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 # GitHub Actions OIDC Provider
 resource "aws_iam_openid_connect_provider" "github_actions" {
   url             = "https://token.actions.githubusercontent.com"
@@ -61,7 +64,7 @@ resource "aws_iam_role_policy" "github_actions" {
           "iam:ListRolePolicies",
           "iam:ListAttachedRolePolicies"
         ]
-        Resource = "arn:aws:iam::*:role/${var.project_name}-${var.environment}-lambda-role"
+        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project_name}-${var.environment}-lambda-role"
       }
     ]
   })
@@ -94,7 +97,7 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
           "ecr:CompleteLayerUpload",
           "ecr:PutImage"
         ]
-        Resource = "arn:aws:ecr:*:*:repository/${var.project_name}-${var.environment}"
+        Resource = "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/${var.project_name}-${var.environment}"
       }
     ]
   })
@@ -119,7 +122,7 @@ resource "aws_iam_role_policy" "github_actions_lambda" {
           "lambda:GetFunction",
           "lambda:ListFunctions"
         ]
-        Resource = "arn:aws:lambda:*:*:function:${var.project_name}-${var.environment}"
+        Resource = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${var.project_name}-${var.environment}"
       }
     ]
   })

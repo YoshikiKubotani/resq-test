@@ -9,6 +9,8 @@ terraform {
   }
 }
 
+provider "aws" {}
+
 # Lambda Function
 module "lambda" {
   source = "../modules/lambda"

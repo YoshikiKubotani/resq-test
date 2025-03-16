@@ -9,6 +9,8 @@ terraform {
   }
 }
 
+provider "aws" {}
+
 # Auth Module (OIDC Provider and IAM Role)
 module "auth" {
   source = "../modules/auth"
