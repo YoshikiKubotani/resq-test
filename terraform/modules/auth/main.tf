@@ -64,3 +64,36 @@ resource "aws_iam_role_policy" "github_actions" {
     ]
   })
 }
+
+# GitHub Actions ECR Push Policy
+resource "aws_iam_role_policy" "github_actions_ecr" {
+  name = "${var.project_name}-${var.environment}-github-actions-policy-ecr"
+  role = aws_iam_role.github_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:BatchGetImage",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
+        ]
+        Resource = "arn:aws:iam::*:role/${var.project_name}-${var.environment}-github-actions-role"
+      }
+    ]
+  })
+}
