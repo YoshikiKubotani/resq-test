@@ -99,3 +99,28 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
     ]
   })
 }
+
+
+# GitHub Actions lambda manipulation policy
+resource "aws_iam_role_policy" "github_actions_lambda" {
+  name = "${var.project_name}-${var.environment}-github-actions-policy-lambda"
+  role = aws_iam_role.github_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "lambda:CreateFunction",
+          "lambda:UpdateFunctionConfiguration",
+          "lambda:UpdateFunctionCode",
+          "lambda:DeleteFunction",
+          "lambda:GetFunction",
+          "lambda:ListFunctions"
+        ]
+        Resource = "arn:aws:lambda:*:*:function:${var.project_name}-${var.environment}"
+      }
+    ]
+  })
+}
