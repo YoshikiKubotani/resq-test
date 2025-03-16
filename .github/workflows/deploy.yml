@@ -77,6 +77,16 @@ jobs:
           echo "Repository URL: $ECR_URL"
           echo "url=${ECR_URL}" >> $GITHUB_OUTPUT
 
+  debug:
+    needs: [prepare, build-and-push]
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Debug Variables
+        run: |
+          echo "Image Tag: ${{ needs.prepare.outputs.image-tag }}"
+          echo "ECR Repository URL: ${{ needs.build-and-push.outputs.ecr-registry-url }}"
+
   deploy:
     needs: [prepare, build-and-push]
     uses: ./.github/workflows/terraform-reusable.yml
