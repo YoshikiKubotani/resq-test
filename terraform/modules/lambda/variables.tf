@@ -36,7 +36,7 @@ variable "allowed_origins" {
   type        = list(string)
 }
 
-variable "accesible_ecr_arn" {
+variable "accessible_ecr_arn" {
   description = "ECR Repository ARN that lambda is allowed to access"
   type = string
 }
