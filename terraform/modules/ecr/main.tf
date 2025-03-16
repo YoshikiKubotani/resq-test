@@ -46,3 +46,25 @@ resource "aws_ecr_repository" "main" {
     ManagedBy   = "terraform"
   }
 }
+
+# ECR Repository Policy
+resource "aws_ecr_repository_policy" "main" {
+  repository = aws_ecr_repository.main.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "LambdaECRImageRetrievalPolicy"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+        Action = [
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ]
+      }
+    ]
+  })
+}
