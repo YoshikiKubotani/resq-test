@@ -45,7 +45,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}-github-actions-role
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/${{ vars.PROJECT_NAME }}-${{ inputs.environment }}-github-actions-role
           role-session-name: gh-oidc-${{ github.run_id }}-${{ github.run_attempt }}
           aws-region: ${{ env.AWS_REGION }}
 
@@ -54,26 +54,20 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push Docker image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}
-          IMAGE_TAG: ${{ needs.prepare.outputs.image-tag }}
         run: |
+          IMAGE_TAG="${{ needs.prepare.outputs.image-tag }}"
+          ECR_URL="${{ steps.login-ecr.outputs.registry }}/${{ vars.PROJECT_NAME }}-${{ inputs.environment }}"
           docker build \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            -t $ECR_URL:$IMAGE_TAG \
+            -t $ECR_URL:latest \
             -f environments/Dockerfile.deploy .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
+          docker push $ECR_URL:$IMAGE_TAG
+          docker push $ECR_URL:latest
 
       - name: Set ECR Repository URL
         id: set-ecr-url
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}
         run: |
-          ECR_URL="$ECR_REGISTRY/$ECR_REPOSITORY"
+          ECR_URL="${{ steps.login-ecr.outputs.registry }}/${{ vars.PROJECT_NAME }}-${{ inputs.environment }}"
           echo "Repository URL: $ECR_URL"
           echo "url=${ECR_URL}" >> $GITHUB_OUTPUT
 
@@ -95,11 +89,7 @@ jobs:
       environment: ${{ inputs.environment }}
       ecr-registry-url: ${{ needs.build-and-push.outputs.ecr-registry-url }}
     secrets:
-      PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
-      LAMBDA_MEMORY: ${{ secrets.LAMBDA_MEMORY }}
-      LAMBDA_TIMEOUT: ${{ secrets.LAMBDA_TIMEOUT }}
     permissions:
       id-token: write
       contents: read
