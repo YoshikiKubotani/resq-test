@@ -93,6 +93,11 @@ resource "aws_lambda_function" "app" {
     Project     = var.project_name
     ManagedBy   = "terraform"
   }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_basic,
+    aws_iam_role_policy.lambda_ecr
+  ]
 }
 
 # Lambda Function URL with configurable CORS
