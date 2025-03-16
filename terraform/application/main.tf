@@ -56,5 +56,5 @@ module "lambda" {
 # Output definitions
 output "function_url" {
   description = "Lambda Function URL"
-  value       = module.lambda.function_url
+  value       = module.lambda.lambda_function_url
 }
