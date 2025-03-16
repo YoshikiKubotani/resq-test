@@ -68,7 +68,7 @@ resource "aws_lambda_function" "app" {
   function_name = "${var.project_name}-${var.environment}"
   role          = aws_iam_role.lambda_execution.arn
   package_type  = "Image"
-  image_uri     = "${var.ecr_repository_url}:${var.image_tag}"
+  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.project_name}-${var.environment}:${var.image_tag}"
 
   memory_size = var.lambda_memory_size
   timeout     = var.lambda_timeout
