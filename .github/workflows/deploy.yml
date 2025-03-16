@@ -67,8 +67,12 @@ jobs:
 
       - name: Set ECR Repository URL
         id: set-ecr-url
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}
         run: |
-          ECR_URL="${{ steps.login-ecr.outputs.registry }}/${{ secrets.PROJECT_NAME }}-${{ inputs.environment }}"
+          ECR_URL="$ECR_REGISTRY/$ECR_REPOSITORY"
+          echo "Repository URL: $ECR_URL"
           echo "url=${ECR_URL}" >> $GITHUB_OUTPUT
 
   deploy:
