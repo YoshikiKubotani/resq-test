@@ -154,3 +154,36 @@ resource "aws_iam_role_policy" "github_actions_lambda" {
     ]
   })
 }
+
+# GitHub Actions Terraform state management policy
+resource "aws_iam_role_policy" "github_actions_terraform_state" {
+  name = "${var.project_name}-github-actions-policy-terraform-state"
+  role = aws_iam_role.github_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.project_name}-terraform-state",
+          "arn:aws:s3:::${var.project_name}-terraform-state/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem"
+        ]
+        Resource = "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${var.project_name}-terraform-state-lock"
+      }
+    ]
+  })
+}
