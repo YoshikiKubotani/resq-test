@@ -75,7 +75,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
-        run: docker compose exec -T terraform terraform -chdir=environments init -backend-config=backend-${{ input.environment }}.hcl
+        run: docker compose exec -T terraform terraform -chdir=environments init -backend-config=backend-${{ inputs.environment }}.hcl
 
       - name: Terraform Plan
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
