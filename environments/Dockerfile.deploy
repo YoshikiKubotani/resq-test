@@ -25,7 +25,8 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 RUN python3 -m pip install uv poethepoet
 
 WORKDIR ${APPLICATION_DIRECTORY}
-COPY ${BACKEND_PATH}/pyproject.toml ${BACKEND_PATH}/uv.lock  ./
+# Do not copy `uv.lock` because it may contain the development dependencies.
+COPY ${BACKEND_PATH}/pyproject.toml  ./
 COPY ${BACKEND_PATH}/src ./src
 COPY ${BACKEND_PATH}/data ./data
 RUN uv sync --no-dev
