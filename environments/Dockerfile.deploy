@@ -21,8 +21,7 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     AWS_LWA_READINESS_CHECK_PORT=8000 \
     AWS_LWA_READINESS_CHECK_PATH="/api/health"
 
-# Install Poethepoet directly using pip to type "poe" command without "uv run".
-RUN python3 -m pip install uv poethepoet
+RUN python3 -m pip install uv
 
 WORKDIR ${APPLICATION_DIRECTORY}
 # Do not copy `uv.lock` because it may contain the development dependencies.
