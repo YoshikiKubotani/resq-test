@@ -12,6 +12,9 @@ on:
       ecr-repository-url:
         required: true
         type: string
+      ecr-repository-arn:
+        required: true
+        type: string
     secrets:
       ALLOWED_ORIGINS:
         required: true
@@ -80,6 +83,7 @@ jobs:
             -var="project_name=${{ vars.PROJECT_NAME }}" \
             -var="image_tag=${{ inputs.image-tag }}" \
             -var="ecr_repository_url=${{ inputs.ecr-repository-url }}" \
+            -var="ecr_repository_arn=${{ inputs.ecr-repository-arn }}" \
             -var="lambda_memory_size=${{ vars.LAMBDA_MEMORY }}" \
             -var="lambda_timeout=${{ vars.LAMBDA_TIMEOUT }}" \
             -var='allowed_origins=${{ vars.ALLOWED_ORIGINS }}' \

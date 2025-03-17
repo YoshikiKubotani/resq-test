@@ -35,6 +35,7 @@ jobs:
     environment: ${{ inputs.environment }}
     outputs:
       ecr-repository-url: ${{ steps.set-ecr-url.outputs.url }}
+      ecr-repository-arn: ${{ steps.set-ecr-arn.outputs.arn }}
     permissions:
       id-token: write
       contents: read
@@ -71,6 +72,12 @@ jobs:
           echo "Repository URL: $ECR_URL"
           echo "url=${ECR_URL}" >> $GITHUB_OUTPUT
 
+      - name: Set ECR Repository ARN
+        id: set-ecr-arn
+        run: |
+          ECR_ARN="arn:aws:ecr:${{ env.AWS_REGION }}:${{ vars.AWS_ACCOUNT_ID }}:repository/${{ vars.PROJECT_NAME }}-${{ inputs.environment }}"
+          echo "Repository ARN: $ECR_ARN"
+          echo "arn=${ECR_ARN}" >> $GITHUB_OUTPUT
 
   deploy:
     needs: [prepare, build-and-push]
@@ -79,6 +86,7 @@ jobs:
       image-tag: ${{ needs.prepare.outputs.image-tag }}
       environment: ${{ inputs.environment }}
       ecr-repository-url: ${{ needs.build-and-push.outputs.ecr-repository-url }}
+      ecr-repository-arn: ${{ needs.build-and-push.outputs.ecr-repository-arn }}
     secrets:
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
     permissions:

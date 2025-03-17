@@ -19,6 +19,11 @@ variable "ecr_repository_url" {
   type        = string
 }
 
+variable "ecr_repository_arn" {
+  description = "ECR Repository ARN"
+  type        = string
+}
+
 variable "lambda_memory_size" {
   description = "Lambda function memory size (MB)"
   type        = number
