@@ -91,7 +91,7 @@ resource "aws_lambda_function" "app" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.lambda_basic,
+    # aws_iam_role_policy_attachment.lambda_basic,
     aws_iam_role_policy.lambda_ecr
   ]
 }
