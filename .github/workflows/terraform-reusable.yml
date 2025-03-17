@@ -95,4 +95,4 @@ jobs:
       - name: Terraform Apply
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
         if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release'
-        run: docker compose exec -T terraform terraform -chdir=application apply -auto-approve tfplan
+        run: docker compose exec -T terraform terraform -chdir=environments apply -auto-approve tfplan
