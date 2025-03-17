@@ -75,12 +75,12 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
-        run: docker compose exec -T terraform terraform -chdir=application init
+        run: docker compose exec -T terraform terraform -chdir=environments init -backend-config=backend-${{ input.environment }}.hcl
 
       - name: Terraform Plan
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
         run: |
-          docker compose exec -T terraform terraform -chdir=application plan \
+          docker compose exec -T terraform terraform -chdir=environments plan \
             -var="environment=${{ inputs.environment }}" \
             -var="project_name=${{ vars.PROJECT_NAME }}" \
             -var="image_tag=${{ inputs.image-tag }}" \
