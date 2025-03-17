@@ -80,7 +80,7 @@ resource "aws_lambda_function" "app" {
   environment {
     variables = {
       OPENAI_API_KEY = var.openai_api_key
-      CORS_ALLOW_ORIGINS = jsonencode(var.allowed_origins)
+      CORS_ALLOW_ORIGINS = ["*"]
     }
   }
 
