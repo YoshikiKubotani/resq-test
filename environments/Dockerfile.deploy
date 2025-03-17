@@ -18,6 +18,7 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     LANG="C.UTF-8" \
     PYTHONPATH=${APPLICATION_DIRECTORY} \
     UV_CACHE_DIR="/tmp/uv/cache" \
+    UV_PROJECT_ENVIRONMENT="/tmp/uv/.venv" \
     AWS_LWA_READINESS_CHECK_PORT=8000 \
     AWS_LWA_READINESS_CHECK_PATH="/api/health"
 
