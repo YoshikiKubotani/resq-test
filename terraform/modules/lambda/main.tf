@@ -103,7 +103,7 @@ resource "aws_lambda_function_url" "app" {
 
   cors {
     allow_origins = ["*"]
-    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_methods = ["GET", "POST"]
     allow_headers = ["Content-Type", "Authorization"]
     max_age       = 300
   }
