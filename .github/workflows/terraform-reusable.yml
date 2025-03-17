@@ -88,6 +88,7 @@ jobs:
             -var="ecr_repository_arn=${{ inputs.ecr-repository-arn }}" \
             -var="lambda_memory_size=${{ vars.LAMBDA_MEMORY }}" \
             -var="lambda_timeout=${{ vars.LAMBDA_TIMEOUT }}" \
+            -var='allowed_origins=${{ secrets.ALLOWED_ORIGINS }}' \
             -var="openai_api_key=${{ secrets.OPENAI_API_KEY }}" \
             -out=tfplan
 
