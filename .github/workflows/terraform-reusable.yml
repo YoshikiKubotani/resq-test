@@ -72,16 +72,6 @@ jobs:
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
         run: docker compose exec -T terraform terraform -chdir=application init
 
-      - name: print allowed origins
-        id: parse-origins
-        run: |
-          echo "${{ vars.ALLOWED_ORIGINS }}"
-
-      - name: Debug Variables
-        run: |
-          echo "Image Tag: ${{ inputs.image-tag }}"
-          echo "ECR Repository URL: ${{ inputs.ecr-registry-url }}"
-
       - name: Terraform Plan
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
         run: |
