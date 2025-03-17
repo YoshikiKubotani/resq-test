@@ -9,10 +9,15 @@ COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.0 /lambda-adapter /opt
 
 ARG RUN_UV_SYNC_AT_BUILD_TIME="false"
 
+# UV requires a cache directory, but AWS Lambda's home directory is read-only.
+# Therefore, the cache directory is set to `/tmp/uv/cache`, which is a writable directory provided by the Lambda system.
+# `AWS_LWA_READINESS_CHECK_PORT` specifies the port number used for the health check of the AWS Lambda web adapter.
+# `AWS_LWA_READINESS_CHECK_PATH` specifies the endpoint used for the health check of the AWS Lambda web adapter.
 ENV DEBIAN_FRONTEND="noninteractive" \
     LC_ALL="C.UTF-8" \
     LANG="C.UTF-8" \
     PYTHONPATH=${APPLICATION_DIRECTORY} \
+    UV_CACHE_DIR="/tmp/uv/cache" \
     AWS_LWA_READINESS_CHECK_PORT=8000 \
     AWS_LWA_READINESS_CHECK_PATH="/api/health"
 
