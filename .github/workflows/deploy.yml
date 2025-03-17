@@ -89,6 +89,7 @@ jobs:
       ecr-repository-arn: ${{ needs.build-and-push.outputs.ecr-repository-arn }}
     secrets:
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     permissions:
       id-token: write
       contents: read

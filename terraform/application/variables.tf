@@ -40,3 +40,9 @@ variable "allowed_origins" {
   description = "List of allowed origins for Lambda Function URL CORS"
   type        = list(string)
 }
+
+variable "openai_api_key" {
+  description = "OpenAI API Key"
+  type        = string
+  default     = ""
+}

@@ -23,6 +23,7 @@ module "lambda" {
   lambda_memory_size = var.lambda_memory_size
   lambda_timeout     = var.lambda_timeout
   allowed_origins    = var.allowed_origins
+  openai_api_key     = var.openai_api_key
 }
 
 
