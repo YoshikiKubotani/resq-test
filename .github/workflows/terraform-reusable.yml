@@ -9,7 +9,7 @@ on:
       environment:
         required: true
         type: string
-      ecr-registry-url:
+      ecr-repository-url:
         required: true
         type: string
     secrets:
@@ -79,7 +79,7 @@ jobs:
             -var="environment=${{ inputs.environment }}" \
             -var="project_name=${{ vars.PROJECT_NAME }}" \
             -var="image_tag=${{ inputs.image-tag }}" \
-            -var="ecr_repository_url=${{ inputs.ecr-registry-url }}" \
+            -var="ecr_repository_url=${{ inputs.ecr-repository-url }}" \
             -var="lambda_memory_size=${{ vars.LAMBDA_MEMORY }}" \
             -var="lambda_timeout=${{ vars.LAMBDA_TIMEOUT }}" \
             -var='allowed_origins=${{ vars.ALLOWED_ORIGINS }}' \

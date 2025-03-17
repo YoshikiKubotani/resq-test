@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     outputs:
-      ecr-registry-url: ${{ steps.set-ecr-url.outputs.url }}
+      ecr-repository-url: ${{ steps.set-ecr-url.outputs.url }}
     permissions:
       id-token: write
       contents: read
@@ -78,7 +78,7 @@ jobs:
     with:
       image-tag: ${{ needs.prepare.outputs.image-tag }}
       environment: ${{ inputs.environment }}
-      ecr-registry-url: ${{ needs.build-and-push.outputs.ecr-registry-url }}
+      ecr-repository-url: ${{ needs.build-and-push.outputs.ecr-repository-url }}
     secrets:
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
     permissions:
