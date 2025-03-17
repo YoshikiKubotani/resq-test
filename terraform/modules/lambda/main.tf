@@ -34,10 +34,10 @@ resource "aws_iam_role" "lambda_execution" {
 }
 
 # Attach basic Lambda execution policy
-# resource "aws_iam_role_policy_attachment" "lambda_basic" {
-#   role       = aws_iam_role.lambda_execution.name
-#   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-# }
+resource "aws_iam_role_policy_attachment" "lambda_basic" {
+  role       = aws_iam_role.lambda_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
 
 # Add ECR access policy for Lambda execution role
 resource "aws_iam_role_policy" "lambda_ecr" {
@@ -89,11 +89,6 @@ resource "aws_lambda_function" "app" {
     Project     = var.project_name
     ManagedBy   = "terraform"
   }
-
-  depends_on = [
-    # aws_iam_role_policy_attachment.lambda_basic,
-    aws_iam_role_policy.lambda_ecr
-  ]
 }
 
 # Lambda Function URL with configurable CORS
