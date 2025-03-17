@@ -85,7 +85,7 @@ convention = "google"
 
 [tool.poe.tasks]
 run-backend-dev = "uvicorn src.main:app --host 0.0.0.0 --port 8000 --log-level debug --reload"
-run-backend-prod = "uvicorn src.main:app --host 0.0.0.0 --port 8000 --log-level debug --workers 4 --timeout 60"
+run-backend-prod = "uvicorn src.main:app --host 0.0.0.0 --port 8000 --log-level debug --workers 4"
 ruff-format = "ruff format src tests"
 ruff-format-check = "ruff format --check src tests"
 ruff-lint = "ruff check src tests --fix"
