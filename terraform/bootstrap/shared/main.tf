@@ -9,9 +9,7 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = var.aws_region
-}
+provider "aws" {}
 
 # S3 bucket and DynamoDB table for Terraform state
 module "state_storage" {
