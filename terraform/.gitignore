@@ -9,7 +9,4 @@ override.tf.json
 *_override.tf.json
 
 # Environment specific variables
-environments/*.tfvars
-
-# Exclude example files
-!environments/*.tfvars.example
+*.tfvars
