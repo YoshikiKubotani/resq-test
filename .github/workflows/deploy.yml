@@ -13,8 +13,6 @@ defaults:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-env:
-  AWS_REGION: ap-northeast-1
 
 jobs:
   prepare:
@@ -48,7 +46,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/${{ vars.PROJECT_NAME }}-github-actions-role
           role-session-name: gh-oidc-${{ github.run_id }}-${{ github.run_attempt }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -75,7 +73,7 @@ jobs:
       - name: Set ECR Repository ARN
         id: set-ecr-arn
         run: |
-          ECR_ARN="arn:aws:ecr:${{ env.AWS_REGION }}:${{ vars.AWS_ACCOUNT_ID }}:repository/${{ vars.PROJECT_NAME }}-${{ inputs.environment }}"
+          ECR_ARN="arn:aws:ecr:${{ vars.AWS_REGION }}:${{ vars.AWS_ACCOUNT_ID }}:repository/${{ vars.PROJECT_NAME }}-${{ inputs.environment }}"
           echo "Repository ARN: $ECR_ARN"
           echo "arn=${ECR_ARN}" >> $GITHUB_OUTPUT
 
