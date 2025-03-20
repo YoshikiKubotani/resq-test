@@ -80,7 +80,7 @@ resource "aws_lambda_function" "app" {
   environment {
     variables = {
       OPENAI_API_KEY = var.openai_api_key
-      CORS_ALLOW_ORIGINS = jsonencode(["*"])
+      CORS_ALLOW_ORIGINS = jsonencode(var.allowed_origins)
     }
   }
 
@@ -97,7 +97,7 @@ resource "aws_lambda_function_url" "app" {
   authorization_type = "NONE"
 
   cors {
-    allow_origins = ["*"]
+    allow_origins = var.allowed_origins
     allow_methods = ["GET", "POST"]
     allow_headers = ["Content-Type", "Authorization"]
     max_age       = 300
