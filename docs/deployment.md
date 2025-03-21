@@ -4,16 +4,17 @@
 
 ## 事前準備
 
-### AWS 関連の準備
+### 1. AWS 関連の準備
 
  - アカウントの作成
-  本プロジェクトでは、デプロイ先のクラウドプロバイダーとして [AWS](https://aws.amazon.com/jp/?nc2=h_lg) に対応しています。 AWS のアカウントを所持されていない方は、まずアカウントを作成してください。
 
-  アプリケーションで使用するサービスは以下の通りです：
-  - [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/jp/ecr/): AWS Lambda 関数の作成元となる Docker イメージの保存
-  - [AWS Lambda](https://aws.amazon.com/jp/lambda/): アプリケーションバックエンドをサーバーレス関数として実行
-  - [Amazon S3](https://aws.amazon.com/jp/s3/): Terraform の state 管理
-  - [Amazon DynamoDB](https://aws.amazon.com/jp/dynamodb/): Terraform の state locking
+   本プロジェクトでは、デプロイ先のクラウドプロバイダーとして [AWS](https://aws.amazon.com/jp/?nc2=h_lg) に対応しています。 AWS のアカウントを所持されていない方は、まずアカウントを作成してください。
+
+   アプリケーションで使用するサービスは以下の通りです：
+   - [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/jp/ecr/): AWS Lambda 関数の作成元となる Docker イメージの保存
+   - [AWS Lambda](https://aws.amazon.com/jp/lambda/): アプリケーションバックエンドをサーバーレス関数として実行
+   - [Amazon S3](https://aws.amazon.com/jp/s3/): Terraform の state 管理
+   - [Amazon DynamoDB](https://aws.amazon.com/jp/dynamodb/): Terraform の state locking
 
   いずれのサービスも無料枠の範囲内であれば課金されることはありませんが、詳細はご自身でよく確認の上で利用してください。
 
@@ -26,36 +27,47 @@
 > 本ドキュメントの手順に従ってデプロイを実行した結果、予期しない課金が発生した場合でも、当方は一切の責任を負いかねますので、あらかじめご了承ください。
 
  - 環境変数の設定
-  ローカル環境や GitHub Actions のワークフロー環境から AWS リソースへのアクセスを許可するために、AWS の認証キーを取得する必要があります。 `environments/terraform.env` に所定の環境変数を指定してください（詳しくは[認証の仕組み](認証の仕組み)の章を参照してください）
 
-  ```Dotenv
-  # AWS credentials
-  AWS_ACCESS_KEY_ID="<AWS_ACCESS_KEY_ID>"
-  AWS_SECRET_ACCESS_KEY="<AWS_SECRET_ACCESS_KEY>"   
-  AWS_SESSION_TOKEN="<AWS_SESSION_TOKEN>"
-  AWS_DEFAULT_REGION="<AWS_DEFAULT_REGION>"
-  ```
+   ローカル環境や GitHub Actions のワークフロー環境から AWS リソースへのアクセスを許可するために、AWS の認証キーを取得する必要があります。 `environments/terraform.env` に所定の環境変数を指定してください（詳しくは[認証の仕組み](認証の仕組み)の章を参照してください）
 
-### GitHub リポジトリの Variables/Secrets 設定
+   `*.env` ファイルは、セキュリティ上の観点から Git の追跡対象外に指定してあるため、最初に `*.env.sample` をコピーして自身でファイルを作成する必要があります。
 
-GitHub Actions のワークフロー内で参照している環境変数については、本リポジトリを自身の GitHub アカウントに複製した後に GitHub 上で指定する必要があります。 
+   ```bash
+   cp environments/terraform.env.sample environments/terraform.env
+   ```
+
+   コピーしたファイルに以下の環境変数を指定してください。
+
+   ```Dotenv
+   # AWS credentials
+   AWS_ACCESS_KEY_ID="<AWS_ACCESS_KEY_ID>"
+   AWS_SECRET_ACCESS_KEY="<AWS_SECRET_ACCESS_KEY>"
+   AWS_SESSION_TOKEN="<AWS_SESSION_TOKEN>"
+   AWS_DEFAULT_REGION="<AWS_DEFAULT_REGION>"
+   ```
+
+### 2. GitHub リポジトリの Variables/Secrets 設定
+
+GitHub Actions のワークフロー内で参照している環境変数については、本リポジトリを自身の GitHub アカウントに複製した後に GitHub 上で指定する必要があります。
 
 GitHub にはデプロイ環境を定義・管理する機能として [Environments](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment) という機能が提供されており、こちらを使用して必要な環境変数を登録します。リポジトリの "Settings" -> "Environments" から **`dev`** と **`prod`** という二つの環境を作成し、それぞれの環境で以下の環境変数を [Environment secrets](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#environment-secrets), [Environment variables](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#environment-variables) として登録してください
 
  - Environment secrets として登録する環境変数
- ```yaml
- OPENAI_API_KEY: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # OpenAI API キー
- ALLOWED_ORIGINS: "["chrome-extension://<EXTENSION_ID>"]" # list(string) 形式で、アクセスを許可するオリジンを指定
- ```
+
+   ```yaml
+   OPENAI_API_KEY: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # OpenAI API キー
+   ALLOWED_ORIGINS: "["chrome-extension://<EXTENSION_ID>"]" # list(string) 形式で、アクセスを許可するオリジンを指定
+   ```
 
  - Environment variables として登録する環境変数
- ```yaml
- PROJECT_NAME: "Project-Name" # プロジェクト名（AWSのリソースの識別子として使用されます）
- AWS_ACCOUNT_ID: "123456789012"  # AWSアカウントID
- AWS_REGION: "ap-northeast-1" # AWSのリージョン名。必ず 1. で設定した `AWS_DEFAULT_REGION` と同じ値にすること
- LAMBDA_MEMORY: "512" # Lambda 関数のメモリサイズ(MB)
- LAMBDA_TIMEOUT: "30" # Lambda 関数のタイムアウト設定(秒)
- ```
+
+   ```yaml
+   PROJECT_NAME: "Project-Name" # プロジェクト名（AWSのリソースの識別子として使用されます）
+   AWS_ACCOUNT_ID: "123456789012"  # AWSアカウントID
+   AWS_REGION: "ap-northeast-1" # AWSのリージョン名。必ず 1. で設定した `AWS_DEFAULT_REGION` と同じ値にすること
+   LAMBDA_MEMORY: "512" # Lambda 関数のメモリサイズ(MB)
+   LAMBDA_TIMEOUT: "30" # Lambda 関数のタイムアウト設定(秒)
+   ```
 
 >[!Warning]
 > GitHub の Environments 機能は、 Free プランのユーザーは Public リポジトリでないと使用できません。 Free プランの Private リポジトリで利用したい方は、代わりに [Repository secrets](https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) と [Repository variables](https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#creating-configuration-variables-for-a-repository) を使用してください。この場合は、ワークフローの入力値として環境の情報が使用できないため `.github/workflows/deploy.yml` の `workflow dispatch.inputs` を適宜修正してください（ input 自体を削除して、`.github/workflows/deploy.yml` ワークフロー内の `inputs.environment` をすべて "prod" でハードコーディングするなどでも良いと思います）
@@ -64,94 +76,175 @@ GitHub にはデプロイ環境を定義・管理する機能として [Environm
 > Cross Origin Resource Sharing(CORS) は、あるオリジンに設置された API サーバーに対して、別のオリジンからリクエストが送られた際に適用される**ブラウザの**制約です。従って、この設定を適用しても、**ブラウザ経由でアクセスを試みた際には** Chrome Extension からのリクエストのみ許可されるようになるというだけであり、 curl や Postman などを使用すれば、任意のIPアドレスからリクエストを送ることができることに注意してください。
 > 本プロジェクトでは、バックエンドに認証機能を追加した際にセキュリティ対策として必要となるため、CORS の設定を最初から含めています。
 
-### ブランチ設定
+### 3. ブランチ設定
 
-   一般的なアプリケーションのデプロイでは、本番環境と開発環境で異なるブランチを使用します。例えば、以下の二つのブランチを作成して下さい：
+一般的なアプリケーションのデプロイでは、本番環境と開発環境で異なるブランチを使用します。例えば、以下の二つのブランチを作成して下さい：
 
-   - `develop` ブランチ: 開発環境へのデプロイに使用
-   - `release` ブランチ: 本番環境へのデプロイに使用
+- `develop` ブランチ: 開発環境へのデプロイに使用
+- `release` ブランチ: 本番環境へのデプロイに使用
 
-   また、上記以外のブランチ名を採用した場合は、 `.github/workflows/terraform-reusable.yml` の最後のステップで条件分岐に使用されるブランチ名を書き換えてください
+また、上記以外のブランチ名を採用した場合は、 `.github/workflows/terraform-reusable.yml` の最後のステップで条件分岐に使用されるブランチ名を書き換えてください
 
-   ```yaml
-   ...
-   - name: Terraform Apply
-      working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
-      if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release' # <--- ここのブランチ名を2つ変更する
-      run: docker compose exec -T terraform terraform -chdir=environments apply -auto-approve tfplan
-   ...
-   ```
+```yaml
+...
+- name: Terraform Apply
+   working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
+   if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release' # <--- ここのブランチ名を2つ変更する
+   run: docker compose exec -T terraform terraform -chdir=environments apply -auto-approve tfplan
+...
+```
 
 > [!Important]
 > 2. 3. で Environments と対応するブランチを作成しただけでは、`develop` ブランチの内容を `prod` 環境にデプロイすることも可能です。そのため、[デプロイ保護規則](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#deployment-protection-rules)を設定し、環境ごとにデプロイ可能なブランチを制限したり、デプロイ時にレビュアーの承認を必須にすることを強く推奨します
 
-### Terraform 関連の設定
+### 4. Terraform 関連の設定
 
-    メモ： `.tfvars`の記載, `backend.hcl`の記載
+- `*.tfvars` ファイルの設定
+
+   本プロジェクトでは、一部の Terraform によるリソースプロビジョニングの実行時に、外部から指定した変数を使用しています。この変数は `*.tfvars` ファイルによって管理されており、 terraform コマンドを実行する前に所定の変数を記載しておく必要があります。なお、 `*.tfvars` ファイルはセキュリティ上の観点から Git の追跡対象外に指定してあるため、最初に `*.tfvars.sample` をコピーして自身でファイルを作成する必要があります。
+
+   - `terraform/bootstrap/shared/terraform.tfvars`
+
+      ファイルの作成
+      ```bash
+      cp terraform/bootstrap/shared/terraform.tfvars.sample terraform/bootstrap/shared/terraform.tfvars
+      ```
+
+      変数の記入
+      ```terraform
+      project_name      = "Project-Name" # プロジェクト名。必ず 2. で設定した `PROJECT_NAME` と同じ値にすること
+      github_repository = "OwnerName/RepositoryName" # リポジトリのオーナーとリポジトリ名をつなげた値
+      ```
+
+   - `terraform/bootstrap/dev/terraform.tfvars`
+
+      ファイルの作成
+      ```bash
+      cp terraform/bootstrap/dev/terraform.tfvars.sample terraform/bootstrap/dev/terraform.tfvars
+      ```
+
+      変数の記入
+      ```terraform
+      project_name = "Project-Name" # プロジェクト名。必ず 2. で設定した `PROJECT_NAME` と同じ値にすること
+      ```
+
+   - `terraform/bootstrap/prod/terraform.tfvars`
+
+      ファイルの作成
+      ```bash
+      cp terraform/bootstrap/prod/terraform.tfvars.sample terraform/bootstrap/prod/terraform.tfvars
+      ```
+
+      変数の記入
+      ```terraform
+      project_name = "Project-Name" # プロジェクト名。必ず 2. で設定した `PROJECT_NAME` と同じ値にすること
+      ```
+
+- `backend.hcl` ファイルの設定
+
+   terraform では、実際にどのようなリソースが建てられているのかを記録するために、state ファイル（`*.tfstate`）を使用します。このファイルには、terraformによって管理されているすべてのリソースの状態（例：リソースの識別子、属性、依存関係など）が記録されています。複数人で開発を行う場合には、それぞれの開発環境からリソースの作成・更新・削除があった場合にも統一的なリソースの状態管理ができるように、 state ファイルをクラウド上（今回の場合は S3 ）で管理することが推奨されます。
+   また、複数の開発者が同時に terraform コマンドを実行した場合、state ファイルの競合やリソースの不整合が発生する可能性があるため terraform には state lockingという機能が提供されています。この state ファイルの lock 状況も、通常はクラウド上（今回の場合は DynamoDB ）で管理を行います。
+
+   そして、state ファイルとその lock 状態の管理場所を設定しているのが `backend.hcl` ファイルであるため、事前に設定が必要です。
+
+   - `terraform/bootstrap/dev/backend.hcl`
+
+      ```hcl
+      bucket         = "<PROJECT_NAME>-terraform-state"      # stateファイルを保存するS3バケット名
+      key            = "bootstrap/dev/terraform.tfstate"     # stateファイルをS3に保存する際のキー名
+      region         = "<AWS_REGION>"                        # S3バケットのリージョン
+      dynamodb_table = "<PROJECT_NAME>-terraform-state-lock" # state lockingに使用するDynamoDBテーブル名
+      encrypt        = true                                  # stateファイルの暗号化の有効化
+      ```
+
+      - `terraform/bootstrap/prod/backend.hcl`
+
+      ```hcl
+      bucket         = "<PROJECT_NAME>-terraform-state"      # stateファイルを保存するS3バケット名
+      key            = "bootstrap/prod/terraform.tfstate"     # stateファイルをS3に保存する際のキー名
+      region         = "<AWS_REGION>"                        # S3バケットのリージョン
+      dynamodb_table = "<PROJECT_NAME>-terraform-state-lock" # state lockingに使用するDynamoDBテーブル名
+      encrypt        = true                                  # stateファイルの暗号化の有効化
+      ```
+
+   - `terraform/environments/backend-dev.hcl`
+
+      ```hcl
+      bucket         = "<PROJECT_NAME>-terraform-state"      # stateファイルを保存するS3バケット名
+      key            = "environments/dev/terraform.tfstate"  # stateファイルをS3に保存する際のキー名
+      region         = "<AWS_REGION>"                        # S3バケットのリージョン
+      dynamodb_table = "<PROJECT_NAME>-terraform-state-lock" # state lockingに使用するDynamoDBテーブル名
+      encrypt        = true                                  # stateファイルの暗号化の有効化
+      ```
+
+   - `terraform/environments/backend-prod.hcl`
+
+      ```hcl
+      bucket         = "<PROJECT_NAME>-terraform-state"      # stateファイルを保存するS3バケット名
+      key            = "environments/prod/terraform.tfstate"  # stateファイルをS3に保存する際のキー名
+      region         = "<AWS_REGION>"                        # S3バケットのリージョン
+      dynamodb_table = "<PROJECT_NAME>-terraform-state-lock" # state lockingに使用するDynamoDBテーブル名
+      encrypt        = true                                  # stateファイルの暗号化の有効化
+      ```
+
 
 ## デプロイの手順
 
-本プロジェクトのTerraformリソースは、以下の3段階で構成されています：
+本プロジェクトの Terraform によるリソースプロビジョニングは、大まかには以下の3段階で構成されています：
 
-1. 共有リソース（terraform/bootstrap/shared/）
-   - 目的：Terraform自体の状態管理とGitHub Actions用の認証基盤の構築
+1. 共有リソース（terraform/bootstrap/shared/）のプロビジョニング
+   - 目的：Terraform の状態管理用リソースの用意と GitHub Actions で使用する認証基盤の構築
    - 作成されるリソース：
      * S3バケット（terraform state保存用）
      * DynamoDBテーブル（state locking用）
-     * GitHub Actions用のIAMロール（OIDC認証）
+     * GitHub Actions用のIAMロールと付随するIAMポリシー（OIDC認証用）
    - デプロイ方法：ローカルで実行（`terraform init` → `terraform apply`）
    - tfstateの管理：ローカルで管理
 
-2. 環境別ブートストラップ（terraform/bootstrap/{dev,prod}/）
-   - 目的：各環境のECRリポジトリの準備
+2. 環境別の事前準備（terraform/bootstrap/{dev,prod}/）
+   - 目的：各環境(dev/prod)で使用するECRリポジトリの準備
    - 作成されるリソース：
-     * ECRリポジトリ（Lambda用のDockerイメージ保存用）
+     * ECRリポジトリ（Lambda関数デプロイに使用するDockerイメージ保存用）
    - デプロイ方法：ローカルで実行（`terraform init -backend-config=backend.hcl` → `terraform apply`）
    - tfstateの管理：1で作成したS3バケットとDynamoDBで管理
 
-3. アプリケーションリソース（terraform/environments/）
-   - 目的：Lambda関数のデプロイと設定
+3. アプリケーションリソース（terraform/environments/）のプロビジョニング
+   - 目的：Lambda関数のデプロイと関数URLの発行・設定
    - 作成されるリソース：
-     * Lambda関数（Function URL付き）
+     * Lambda関数（関数URL付き）
      * Lambda実行用IAMロール
-   - デプロイ方法：GitHub Actionsで自動実行
+   - デプロイ方法：GitHub Actionsで自動実行（`.github/workflows/terraform-reusable.yml`で実行）
    - tfstateの管理：1で作成したS3バケットとDynamoDBで管理
 
+### 1. 共有リソースのプロビジョニング
 
-### 1. 共有リソースのデプロイ
-   ```bash
-   # terraform/bootstrap/shared/ ディレクトリで実行
-   terraform init
-   terraform apply
-   ```
-   このステップで作成されるGitHub Actions用のIAMロールには以下の権限が付与されます：
-   - IAMロールの作成・管理（Lambda実行用）
-   - ECRリポジトリへのアクセス（イメージのプッシュ・プル）
-   - Lambda関数の管理（作成・更新・削除）
-   - S3バケットへのアクセス（terraform state管理用）
-   - DynamoDBテーブルへのアクセス（state locking用）
+```bash
+cd terraform/bootstrap/shared
 
-### ２. 環境別ブートストラップのデプロイ
-   ```bash
-   # terraform/bootstrap/dev/ または terraform/bootstrap/prod/ ディレクトリで実行
-   terraform init -backend-config=backend.hcl
-   terraform apply
-   ```
+terraform init
+terraform apply
+```
 
-### ３. アプリケーションのデプロイ
-   GitHub Actionsの "Deploy Application" ワークフローを使用します：
+このステップで作成される GitHub Actions 用のIAMロールには以下の権限が付与されます：
+- IAMロールの作成・管理（Lambda 実行用）
+- ECRリポジトリへのアクセス（ Docker イメージのプッシュ・プル）
+- Lambda 関数の管理（作成・更新・削除）
+- S3バケットへのアクセス（ terraform の state 管理用）
+- DynamoDB テーブルへのアクセス（ state locking 用）
 
-   a. ワークフローの実行
-   - GitHub Actions の "Deploy Application" ワークフローから"Run Workflows"を選択
-   - 環境（dev/prod）を選択して実行
+### ２. 環境別の事前準備
 
-   b. ワークフローの処理内容
-   - Dockerイメージのビルド
-   - ECRへのイメージプッシュ
-   - Terraformによるインフラストラクチャの更新
-     * terraform init -backend-config=backend-{dev,prod}.hcl
-     * terraform plan
-     * terraform apply
+```bash
+cd terraform/bootstrap/dev # 開発環境へのデプロイ
+cd terraform/bootstrap/prod # 本番環境へのデプロイ
+
+terraform init -backend-config=backend.hcl
+terraform apply
+```
+
+### ３. アプリケーションリソースのプロビジョニング
+
+GitHub のリポジトリページを開き、"Actions" を開きます。左側にリポジトリで使用可能なワークフローの一覧が並んでいるので、"deploy-applications" を選択します。画面上の "Run workflow" ボタンから**デプロイする対象のブランチ(develop/release)**と**デプロイ先の環境(dev/prod)**を選択して実行すれば、アプリケーションリソースがデプロイされます。
 
 以下に、デプロイ全体のフローのシーケンス図を載せておきます。
 
@@ -183,8 +276,7 @@ sequenceDiagram
     Note right of Lambda: Function URLで公開
 ```
 
-
-## 認証の仕組み
+## （補足）認証の仕組み
 
 ### ローカルでのterraform実行時
 
