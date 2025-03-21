@@ -1,3 +1,2 @@
-aws_region        = "<AWS_REGION>"
 project_name      = "<PROJECT_NAME>"
 github_repository = "<OWNER>/<REPOSITORY>"
