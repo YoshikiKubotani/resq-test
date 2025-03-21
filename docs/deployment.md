@@ -64,7 +64,7 @@ GitHub にはデプロイ環境を定義・管理する機能として [Environm
 > Cross Origin Resource Sharing(CORS) は、あるオリジンに設置された API サーバーに対して、別のオリジンからリクエストが送られた際に適用される**ブラウザの**制約です。従って、この設定を適用しても、**ブラウザ経由でアクセスを試みた際には** Chrome Extension からのリクエストのみ許可されるようになるというだけであり、 curl や Postman などを使用すれば、任意のIPアドレスからリクエストを送ることができることに注意してください。
 > 本プロジェクトでは、バックエンドに認証機能を追加した際にセキュリティ対策として必要となるため、CORS の設定を最初から含めています。
 
-3. ブランチ設定
+### ブランチ設定
 
    一般的なアプリケーションのデプロイでは、本番環境と開発環境で異なるブランチを使用します。例えば、以下の二つのブランチを作成して下さい：
 
@@ -85,11 +85,11 @@ GitHub にはデプロイ環境を定義・管理する機能として [Environm
 > [!Important]
 > 2. 3. で Environments と対応するブランチを作成しただけでは、`develop` ブランチの内容を `prod` 環境にデプロイすることも可能です。そのため、[デプロイ保護規則](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#deployment-protection-rules)を設定し、環境ごとにデプロイ可能なブランチを制限したり、デプロイ時にレビュアーの承認を必須にすることを強く推奨します
 
-4. Terraform 関連の設定
+### Terraform 関連の設定
 
     メモ： `.tfvars`の記載, `backend.hcl`の記載
 
-## デプロイの構造
+## デプロイの手順
 
 本プロジェクトのTerraformリソースは、以下の3段階で構成されています：
 
@@ -117,9 +117,8 @@ GitHub にはデプロイ環境を定義・管理する機能として [Environm
    - デプロイ方法：GitHub Actionsで自動実行
    - tfstateの管理：1で作成したS3バケットとDynamoDBで管理
 
-## デプロイの手順
 
-1. 共有リソースのデプロイ
+### 1. 共有リソースのデプロイ
    ```bash
    # terraform/bootstrap/shared/ ディレクトリで実行
    terraform init
@@ -132,14 +131,14 @@ GitHub にはデプロイ環境を定義・管理する機能として [Environm
    - S3バケットへのアクセス（terraform state管理用）
    - DynamoDBテーブルへのアクセス（state locking用）
 
-2. 環境別ブートストラップのデプロイ
+### ２. 環境別ブートストラップのデプロイ
    ```bash
    # terraform/bootstrap/dev/ または terraform/bootstrap/prod/ ディレクトリで実行
    terraform init -backend-config=backend.hcl
    terraform apply
    ```
 
-3. アプリケーションのデプロイ
+### ３. アプリケーションのデプロイ
    GitHub Actionsの "Deploy Application" ワークフローを使用します：
 
    a. ワークフローの実行
@@ -154,7 +153,7 @@ GitHub にはデプロイ環境を定義・管理する機能として [Environm
      * terraform plan
      * terraform apply
 
-## デプロイの流れ
+以下に、デプロイ全体のフローのシーケンス図を載せておきます。
 
 ```mermaid
 sequenceDiagram
@@ -183,10 +182,6 @@ sequenceDiagram
     GHA->>Lambda: Lambda関数作成/更新
     Note right of Lambda: Function URLで公開
 ```
-
-デプロイが完了すると：
-- Lambda Function URL が出力されます
-- CloudWatch Logs でログを確認できます
 
 
 ## 認証の仕組み
