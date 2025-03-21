@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     LANG="C.UTF-8"
 
 # Install tflint. bash is required for the installation script.
-RUN apk add --no-cache bash curl aws-cli
+RUN apk add --no-cache bash curl
 RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 # Add user. Without this, following process is executed as admin.
