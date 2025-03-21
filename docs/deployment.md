@@ -4,64 +4,65 @@
 
 ## 事前準備
 
-1. AWS 関連の準備
+### AWS 関連の準備
 
-   - アカウントの作成
-      本プロジェクトでは、デプロイ先のクラウドプロバイダーとして [AWS](https://aws.amazon.com/jp/?nc2=h_lg) に対応しています。 AWS のアカウントを所持されていない方は、まずアカウントを作成してください。
+ - アカウントの作成
+  本プロジェクトでは、デプロイ先のクラウドプロバイダーとして [AWS](https://aws.amazon.com/jp/?nc2=h_lg) に対応しています。 AWS のアカウントを所持されていない方は、まずアカウントを作成してください。
 
-      アプリケーションで使用するサービスは以下の通りです：
-      - [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/jp/ecr/): AWS Lambda 関数の作成元となる Docker イメージの保存
-      - [AWS Lambda](https://aws.amazon.com/jp/lambda/): アプリケーションバックエンドをサーバーレス関数として実行
-      - [Amazon S3](https://aws.amazon.com/jp/s3/): Terraform の state 管理
-      - [Amazon DynamoDB](https://aws.amazon.com/jp/dynamodb/): Terraform の state locking
+  アプリケーションで使用するサービスは以下の通りです：
+  - [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/jp/ecr/): AWS Lambda 関数の作成元となる Docker イメージの保存
+  - [AWS Lambda](https://aws.amazon.com/jp/lambda/): アプリケーションバックエンドをサーバーレス関数として実行
+  - [Amazon S3](https://aws.amazon.com/jp/s3/): Terraform の state 管理
+  - [Amazon DynamoDB](https://aws.amazon.com/jp/dynamodb/): Terraform の state locking
 
-      いずれのサービスも無料枠の範囲内であれば課金されることはありませんが、詳細はご自身でよく確認の上で利用してください。
+  いずれのサービスも無料枠の範囲内であれば課金されることはありませんが、詳細はご自身でよく確認の上で利用してください。
 
-      - [AWS Lambdaの料金](https://aws.amazon.com/jp/lambda/pricing/)
-      - [Amazon ECRの料金](https://aws.amazon.com/jp/ecr/pricing/)
-      - [Amazon S3の料金](https://aws.amazon.com/jp/s3/pricing/)
-      - [Amazon DynamoDBの料金](https://aws.amazon.com/jp/dynamodb/pricing/)
+  - [AWS Lambdaの料金](https://aws.amazon.com/jp/lambda/pricing/)
+  - [Amazon ECRの料金](https://aws.amazon.com/jp/ecr/pricing/)
+  - [Amazon S3の料金](https://aws.amazon.com/jp/s3/pricing/)
+  - [Amazon DynamoDBの料金](https://aws.amazon.com/jp/dynamodb/pricing/)
 
 > [!Important]
 > 本ドキュメントの手順に従ってデプロイを実行した結果、予期しない課金が発生した場合でも、当方は一切の責任を負いかねますので、あらかじめご了承ください。
 
-   - 環境変数の設定
-      ローカル環境や GitHub Actions のワークフロー環境から AWS リソースへのアクセスを許可するために、AWS の認証キーを取得する必要があります。 `environments/terraform.env` に所定の環境変数を指定してください（詳しくは[認証の仕組み](認証の仕組み)の章を参照してください）
+ - 環境変数の設定
+  ローカル環境や GitHub Actions のワークフロー環境から AWS リソースへのアクセスを許可するために、AWS の認証キーを取得する必要があります。 `environments/terraform.env` に所定の環境変数を指定してください（詳しくは[認証の仕組み](認証の仕組み)の章を参照してください）
 
-      ```Dotenv
-      # AWS credentials
-      AWS_ACCESS_KEY_ID="<AWS_ACCESS_KEY_ID>"
-      AWS_SECRET_ACCESS_KEY="<AWS_SECRET_ACCESS_KEY>"
-      AWS_SESSION_TOKEN="<AWS_SESSION_TOKEN>"
-      AWS_DEFAULT_REGION="<AWS_DEFAULT_REGION>"
-      ```
+  ```Dotenv
+  # AWS credentials
+  AWS_ACCESS_KEY_ID="<AWS_ACCESS_KEY_ID>"
+  AWS_SECRET_ACCESS_KEY="<AWS_SECRET_ACCESS_KEY>"   
+  AWS_SESSION_TOKEN="<AWS_SESSION_TOKEN>"
+  AWS_DEFAULT_REGION="<AWS_DEFAULT_REGION>"
+  ```
 
-2. GitHub リポジトリの Variables/Secrets 設定
+### GitHub リポジトリの Variables/Secrets 設定
 
-   GitHub Actions のワークフロー内で参照している環境変数については、本リポジトリを自身の GitHub アカウントに複製した後に GitHub 上で指定する必要があります。 GitHub にはデプロイ環境を定義・管理する機能として [Environments](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment) という機能が提供されており、こちらを使用して必要な環境変数を登録します。リポジトリの "Settings" -> "Environments" から `dev` と `prod` という二つの環境を作成し、それぞれの環境で以下の環境変数を [Environment secrets](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#environment-secrets), [Environment variables](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#environment-variables) として登録してください
+GitHub Actions のワークフロー内で参照している環境変数については、本リポジトリを自身の GitHub アカウントに複製した後に GitHub 上で指定する必要があります。 
 
-   - Environment secrets として登録する環境変数
-   ```yaml
-   OPENAI_API_KEY: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # OpenAI API キー
-   ALLOWED_ORIGINS: "["chrome-extension://<EXTENSION_ID>"]" # list(string) 形式で、アクセスを許可するオリジンを指定
-   ```
+GitHub にはデプロイ環境を定義・管理する機能として [Environments](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment) という機能が提供されており、こちらを使用して必要な環境変数を登録します。リポジトリの "Settings" -> "Environments" から **`dev`** と **`prod`** という二つの環境を作成し、それぞれの環境で以下の環境変数を [Environment secrets](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#environment-secrets), [Environment variables](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment#environment-variables) として登録してください
 
-   - Environment variables として登録する環境変数
-   ```yaml
-   PROJECT_NAME: "Project-Name" # プロジェクト名（AWSのリソースの識別子として使用されます）
-   AWS_ACCOUNT_ID: "123456789012"  # AWSアカウントID
-   AWS_REGION: "ap-northeast-1" # AWSのリージョン名。必ず 1. で設定した `AWS_DEFAULT_REGION` と同じ値にすること
-   LAMBDA_MEMORY: "512" # Lambda 関数のメモリサイズ(MB)
-   LAMBDA_TIMEOUT: "30" # Lambda 関数のタイムアウト設定(秒)
-   ```
+ - Environment secrets として登録する環境変数
+ ```yaml
+ OPENAI_API_KEY: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # OpenAI API キー
+ ALLOWED_ORIGINS: "["chrome-extension://<EXTENSION_ID>"]" # list(string) 形式で、アクセスを許可するオリジンを指定
+ ```
+
+ - Environment variables として登録する環境変数
+ ```yaml
+ PROJECT_NAME: "Project-Name" # プロジェクト名（AWSのリソースの識別子として使用されます）
+ AWS_ACCOUNT_ID: "123456789012"  # AWSアカウントID
+ AWS_REGION: "ap-northeast-1" # AWSのリージョン名。必ず 1. で設定した `AWS_DEFAULT_REGION` と同じ値にすること
+ LAMBDA_MEMORY: "512" # Lambda 関数のメモリサイズ(MB)
+ LAMBDA_TIMEOUT: "30" # Lambda 関数のタイムアウト設定(秒)
+ ```
 
 >[!Warning]
-> GitHub の Environments 機能は、 Free プランのユーザーは Public リポジトリでないと使用できません。代わりに [Repository secrets](https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) と [Repository variables](https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#creating-configuration-variables-for-a-repository) を使用してください。この場合は、ワークフローの入力値として環境の情報が使用できないため `.github/workflows/deploy.yml` の `workflow dispatch.inputs` を適宜修正してください（ input 自体を削除して、`.github/workflows/deploy.yml` ワークフロー内の `inputs.environment` をすべて "prod" でハードコーディングするなどでも良いと思います）
+> GitHub の Environments 機能は、 Free プランのユーザーは Public リポジトリでないと使用できません。 Free プランの Private リポジトリで利用したい方は、代わりに [Repository secrets](https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) と [Repository variables](https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#creating-configuration-variables-for-a-repository) を使用してください。この場合は、ワークフローの入力値として環境の情報が使用できないため `.github/workflows/deploy.yml` の `workflow dispatch.inputs` を適宜修正してください（ input 自体を削除して、`.github/workflows/deploy.yml` ワークフロー内の `inputs.environment` をすべて "prod" でハードコーディングするなどでも良いと思います）
 
 > [!Important]
 > Cross Origin Resource Sharing(CORS) は、あるオリジンに設置された API サーバーに対して、別のオリジンからリクエストが送られた際に適用される**ブラウザの**制約です。従って、この設定を適用しても、**ブラウザ経由でアクセスを試みた際には** Chrome Extension からのリクエストのみ許可されるようになるというだけであり、 curl や Postman などを使用すれば、任意のIPアドレスからリクエストを送ることができることに注意してください。
-> 本プロジェクトでは、バックエンドに認証機能を追加した際に必要となるため、CORS の設定を最初から含めています。
->
+> 本プロジェクトでは、バックエンドに認証機能を追加した際にセキュリティ対策として必要となるため、CORS の設定を最初から含めています。
 
 3. ブランチ設定
 
@@ -86,7 +87,7 @@
 
 4. Terraform 関連の設定
 
-   メモ： `.tfvars`の記載, `backend.hcl`の記載
+    メモ： `.tfvars`の記載, `backend.hcl`の記載
 
 ## デプロイの構造
 
